@@ -1,6 +1,9 @@
 package models
 
-import "github.com/jinzhu/gorm"
+import (
+	"github.com/jinzhu/gorm"
+	// "github.com/qor/qor/media_library"
+)
 
 type User struct {
 	gorm.Model
@@ -11,7 +14,14 @@ type User struct {
 	LastNname string
 	Gender    string
 	Role      string
+	Languages []Language `gorm:"many2many:user_languages;"`
+	// Avatar    media_library.FileSystem
 	Addresses []Address
+}
+
+type Language struct {
+	gorm.Model
+	Name string
 }
 
 func (user User) DisplayName() string {
