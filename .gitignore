@@ -2,6 +2,7 @@
 *.o
 *.a
 *.so
+*.orig
 
 # Folders
 _obj
@@ -24,9 +25,14 @@ _testmain.go
 *.prof
 runner-build
 qor-example
+
+config/database*yml
 public/system
 
 .editorconfig
+deploy.sh
+db/seeds/enterprise
+db/seeds/main
 harp.json
-config/database*yml
+.harp
 tmp/*

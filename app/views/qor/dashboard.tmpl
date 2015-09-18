@@ -1,0 +1,84 @@
+<div class="qor-page__body">
+  <div class="qor-section">
+    <div class="qor-section__header">
+      <h4 class="qor-section-title">{{t "Latest Orders"}}</h4>
+    </div>
+    <div class="qor-section__body qor-table-container">
+      {{(new_resource_context "Order").Render "index/table" latest_orders}}
+    </div>
+  </div>
+
+  <div class="qor-section reports">
+    <div class="qor-section__header">
+      <h4 class="qor-section-title">{{t "Reports"}}</h4>
+    </div>
+
+    <div class="mdl-grid reports-daterange">
+      <div class="mdl-cell">
+        <input class="mdl-textfield__input" id="startDate" type="text" data-toggle="qor.datepicker" >
+      </div>
+      <div class="mdl-cell datepicker-separator">
+        -
+      </div>
+      <div class="mdl-cell">
+        <input class="mdl-textfield__input" id="endDate" type="text" data-toggle="qor.datepicker" >
+      </div>
+
+      <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect j-update-record" > {{t "Update Report"}} </button>
+      <button class="mdl-button yesterday-reports" > {{t "Yesterday"}} </button>
+      <button class="mdl-button this-week-reports" > {{t "This Week"}} </button>
+      <button class="mdl-button last-week-reports" > {{t "Last Week"}} </button>
+    </div>
+
+    <div class="mdl-grid">
+      <div class="mdl-cell mdl-cell--6-col">
+        <h4 class="qor-section-title">{{t "Paid Orders Count"}}</h4>
+        <canvas id="orders_report"></canvas>
+      </div>
+
+      <div class="mdl-cell mdl-cell--6-col">
+        <h4 class="qor-section-title">{{t "Registered Users Count"}}</h4>
+        <canvas id="users_report"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <script src="/javascripts/Chart.min.js"></script>
+  <script>
+    $(document).ready(function(){
+      var yesterday = (new Date()).AddDate(-1);
+      var defStartDate = yesterday.AddDate(-6);
+      $("#startDate").val(defStartDate.Format("yyyy-MM-dd"));
+      $("#endDate").val(yesterday.Format("yyyy-MM-dd"));
+      $(".j-update-record").click(function(){
+        $.getJSON("/admin/reports",{startDate:$("#startDate").val(), endDate:$("#endDate").val()},function(jsonData){
+          RenderChart(jsonData.Orders,jsonData.Users);
+        });
+      });
+      $(".j-update-record").click();
+
+      $(".yesterday-reports").click(function() {
+        $("#startDate").val(yesterday.Format("yyyy-MM-dd"));
+        $("#endDate").val(yesterday.Format("yyyy-MM-dd"));
+        $(".j-update-record").click();
+        $(this).blur();
+      });
+
+      $(".this-week-reports").click(function() {
+        var beginningOfThisWeek = yesterday.AddDate(-yesterday.getDay() + 1)
+        $("#startDate").val(beginningOfThisWeek.Format("yyyy-MM-dd"));
+        $("#endDate").val(beginningOfThisWeek.AddDate(6).Format("yyyy-MM-dd"));
+        $(".j-update-record").click();
+        $(this).blur();
+      });
+
+      $(".last-week-reports").click(function() {
+        var endOfLastWeek = yesterday.AddDate(-yesterday.getDay())
+        $("#startDate").val(endOfLastWeek.AddDate(-6).Format("yyyy-MM-dd"));
+        $("#endDate").val(endOfLastWeek.Format("yyyy-MM-dd"));
+        $(".j-update-record").click();
+        $(this).blur();
+      });
+    });
+  </script>
+</div>
