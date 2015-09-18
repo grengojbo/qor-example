@@ -24,6 +24,7 @@ $ go run main.go
 ## Generate sample data
 
 ```go
+$ go get github.com/manveru/faker
 $ go run db/seeds/main.go
 ```
 

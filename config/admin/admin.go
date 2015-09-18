@@ -1,7 +1,6 @@
 package admin
 
 import (
-	"fmt"
 	"strconv"
 	"strings"
 
@@ -12,7 +11,7 @@ import (
 	"github.com/qor/qor"
 	"github.com/qor/qor/admin"
 	"github.com/qor/qor/resource"
-	"github.com/qor/qor/transition"
+	// "github.com/qor/qor/transition"
 	"github.com/qor/qor/utils"
 	"github.com/qor/qor/validations"
 )
@@ -50,61 +49,61 @@ func init() {
 	Admin.AddResource(&models.Size{}, &admin.Config{Menu: []string{"Product Management"}})
 	Admin.AddResource(&models.Category{}, &admin.Config{Menu: []string{"Product Management"}})
 
-	// Add Order
+	// // Add Order
 	orderItem := Admin.NewResource(&models.OrderItem{})
-	orderItem.Meta(&admin.Meta{Name: "SizeVariation", Type: "select_one", Collection: sizeVariationCollection})
+	// orderItem.Meta(&admin.Meta{Name: "SizeVariation", Type: "select_one", Collection: sizeVariationCollection})
 
 	order := Admin.AddResource(&models.Order{}, &admin.Config{Menu: []string{"Order Management"}})
-	order.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
-	order.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
+	// order.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
+	// order.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
 	order.Meta(&admin.Meta{Name: "OrderItems", Resource: orderItem})
 
 	// define scopes for Order
-	for _, state := range []string{"checkout", "cancelled", "paid", "paid_cancelled", "processing", "shipped", "returned"} {
-		var state = state
-		order.Scope(&admin.Scope{
-			Name:  state,
-			Label: strings.Title(strings.Replace(state, "_", " ", -1)),
-			Group: "Order Status",
-			Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-				return db.Where(models.Order{Transition: transition.Transition{State: state}})
-			},
-		})
-	}
-	order.IndexAttrs("-DiscountValue", "-OrderItems", "-AbandonedReason")
-	order.NewAttrs("-DiscountValue", "-AbandonedReason")
-	order.EditAttrs("-DiscountValue", "-AbandonedReason")
-	order.ShowAttrs("-DiscountValue", "-AbandonedReason")
+	// for _, state := range []string{"checkout", "cancelled", "paid", "paid_cancelled", "processing", "shipped", "returned"} {
+	// 	var state = state
+	// 	order.Scope(&admin.Scope{
+	// 		Name:  state,
+	// 		Label: strings.Title(strings.Replace(state, "_", " ", -1)),
+	// 		Group: "Order Status",
+	// 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+	// 			return db.Where(models.Order{Transition: transition.Transition{State: state}})
+	// 		},
+	// 	})
+	// }
+	// order.IndexAttrs("-DiscountValue", "-OrderItems", "-AbandonedReason")
+	// order.NewAttrs("-DiscountValue", "-AbandonedReason")
+	// order.EditAttrs("-DiscountValue", "-AbandonedReason")
+	// order.ShowAttrs("-DiscountValue", "-AbandonedReason")
 
-	// Define another resource for same model
-	abandonedOrder := Admin.AddResource(&models.Order{}, &admin.Config{Name: "Abandoned Order", Menu: []string{"Order Management"}})
-	abandonedOrder.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
-	abandonedOrder.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
+	// // Define another resource for same model
+	// abandonedOrder := Admin.AddResource(&models.Order{}, &admin.Config{Name: "Abandoned Order", Menu: []string{"Order Management"}})
+	// abandonedOrder.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
+	// abandonedOrder.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
 
-	// Define default scope for abandoned orders
-	abandonedOrder.Scope(&admin.Scope{
-		Default: true,
-		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("abandoned_reason IS NOT NULL AND abandoned_reason <> ?", "")
-		},
-	})
+	// // Define default scope for abandoned orders
+	// abandonedOrder.Scope(&admin.Scope{
+	// 	Default: true,
+	// 	Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+	// 		return db.Where("abandoned_reason IS NOT NULL AND abandoned_reason <> ?", "")
+	// 	},
+	// })
 
-	// Define scopes for abandoned orders
-	for _, amount := range []int{5000, 10000, 20000} {
-		var amount = amount
-		abandonedOrder.Scope(&admin.Scope{
-			Name:  fmt.Sprint(amount),
-			Group: "Amount Greater Than",
-			Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-				return db.Where("payment_amount > ?", amount)
-			},
-		})
-	}
+	// // Define scopes for abandoned orders
+	// for _, amount := range []int{5000, 10000, 20000} {
+	// 	var amount = amount
+	// 	abandonedOrder.Scope(&admin.Scope{
+	// 		Name:  fmt.Sprint(amount),
+	// 		Group: "Amount Greater Than",
+	// 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+	// 			return db.Where("payment_amount > ?", amount)
+	// 		},
+	// 	})
+	// }
 
-	abandonedOrder.IndexAttrs("-DiscountValue", "-OrderItems")
-	abandonedOrder.NewAttrs("-DiscountValue")
-	abandonedOrder.EditAttrs("-DiscountValue")
-	abandonedOrder.ShowAttrs("-DiscountValue")
+	// abandonedOrder.IndexAttrs("-DiscountValue", "-OrderItems")
+	// abandonedOrder.NewAttrs("-DiscountValue")
+	// abandonedOrder.EditAttrs("-DiscountValue")
+	// abandonedOrder.ShowAttrs("-DiscountValue")
 
 	// Add Store
 	store := Admin.AddResource(&models.Store{}, &admin.Config{Menu: []string{"Store Management"}})
@@ -127,6 +126,8 @@ func init() {
 
 	// Add Setting
 	Admin.AddResource(&models.Setting{}, &admin.Config{Singleton: true})
+	// s := Admin.AddResource(&models.Setting{})
+	// s.IndexAttrs("ID")
 
 	// Add User
 	user := Admin.AddResource(&models.User{})
@@ -136,6 +137,8 @@ func init() {
 
 	// Add Publish
 	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
+	Admin.AddMenu(&admin.Menu{Name: "Google", Link: "http://www.google.com", Ancestors: []string{"Outside", "Search Engine"}})
+
 	initFuncMap()
 	initRouter()
 }

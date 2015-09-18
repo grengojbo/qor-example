@@ -22,7 +22,7 @@ func (Auth) LogoutURL(c *admin.Context) string {
 
 func (Auth) GetCurrentUser(c *admin.Context) qor.CurrentUser {
 	var currentUser models.User
-	if !c.GetDB().Where("name = ?", "currentUser").First(&currentUser).RecordNotFound() {
+	if !c.GetDB().Where("name = ?", "admin").First(&currentUser).RecordNotFound() {
 		return &currentUser
 	}
 
