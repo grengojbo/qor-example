@@ -3,8 +3,8 @@ package models
 import (
 	"time"
 
+	"github.com/grengojbo/qor-example/db"
 	"github.com/jinzhu/now"
-	"github.com/qor/qor-example/db"
 )
 
 type Chart struct {

@@ -3,7 +3,7 @@ package admin
 import (
 	"time"
 
-	"github.com/qor/qor-example/app/models"
+	"github.com/grengojbo/qor-example/app/models"
 )
 
 func initFuncMap() {

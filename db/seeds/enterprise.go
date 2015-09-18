@@ -6,8 +6,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/qor/qor-example/db"
-	"github.com/qor/qor-example/db/seeds"
+	"github.com/grengojbo/qor-example/db"
+	"github.com/grengojbo/qor-example/db/seeds"
 	"github.com/theplant/qor-enterprise/promotion"
 )
 
