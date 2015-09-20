@@ -9,6 +9,11 @@ import (
 	_ "github.com/grengojbo/qor-example/db/migrations"
 )
 
+var (
+	Version   = "0.1.0"
+	BuildTime = "2015-09-20 UTC"
+)
+
 func main() {
 	mux := http.NewServeMux()
 	admin.Admin.MountTo("/admin", mux)

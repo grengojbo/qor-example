@@ -17,7 +17,7 @@ type Order struct {
 	BillingAddressID  uint
 	BillingAddress    Address
 	OrderItems        []OrderItem
-	transition.Transition
+	// transition.Transition
 }
 
 type OrderItem struct {
@@ -28,7 +28,7 @@ type OrderItem struct {
 	Quantity        uint
 	Price           float32
 	DiscountRate    uint
-	transition.Transition
+	// transition.Transition
 }
 
 func (order Order) Amount() (amount float32) {
