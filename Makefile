@@ -2,6 +2,7 @@ OSNAME=$(shell uname)
 
 GO=$(shell which go)
 
+CUR_TIME=$(shell date '+%Y-%m-%d_%H:%M:%S')
 # Program version
 VERSION=$(shell cat VERSION)
 
@@ -83,7 +84,7 @@ push:
 
 build: clean
 	@echo "Building ${BIN_NAME} ${VERSION}"
-	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w' -o $(BIN_NAME) main.go
+	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o $(BIN_NAME) main.go
 
 docs:
 	godoc -http=:6060 -index
