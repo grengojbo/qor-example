@@ -7,16 +7,20 @@ import (
 
 type User struct {
 	gorm.Model
-	Email     string
-	Password  string
 	Name      string
+	Password  string
 	FirstName string
 	LastNname string
 	Gender    string
 	Role      string
+	Email     []Email
+	Phone     []Phone
+	Social    []Social
 	Languages []Language `gorm:"many2many:user_languages;"`
-	// Avatar    media_library.FileSystem
 	Addresses []Address
+	Comment   string
+	// Location  string
+	// Avatar    media_library.FileSystem
 }
 
 type Language struct {
