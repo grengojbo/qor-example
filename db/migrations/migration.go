@@ -4,8 +4,8 @@ import (
 	"log"
 
 	"github.com/grengojbo/qor-example/app/models"
+	"github.com/grengojbo/qor-example/db"
 	"github.com/qor/qor/admin"
-	"github.com/qor/qor-example/db"
 	"github.com/qor/qor/publish"
 )
 
@@ -31,11 +31,11 @@ func init() {
 }
 
 func AutoMigrate(values ...interface{}) {
-       for _, value := range values {
-               db.DB.AutoMigrate(value)
+	for _, value := range values {
+		db.DB.AutoMigrate(value)
 
-               if publish.IsPublishableModel(value) {
-                       db.Publish.AutoMigrate(value)
-               }
-       }
- }
+		if publish.IsPublishableModel(value) {
+			db.Publish.AutoMigrate(value)
+		}
+	}
+}

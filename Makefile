@@ -37,7 +37,8 @@ help:
 	@echo "make save - Save project libs"
 	@echo "make install - Install packages"
 	@echo "make clean   - Clean .orig, .log files"
-	@#echo "make run     - Run project debug mode"
+	@echo "make run     - Run project debug mode"
+	@echo "make seed     - Run project seeds"
 	@echo "make build - Build for current OS project"
 	@echo "make release - Build release project"
 	@#echo "make docs"   - Project documentation
@@ -50,8 +51,9 @@ save:
 	godep save
 
 install:
-	go get -v -u
-	go get -v -u github.com/manveru/faker
+	@go get -v -u
+	@#go get -v -u github.com/manveru/faker
+	@go get -v -u github.com/azumads/faker
 
 release:
 	@echo "building release ${BIN_NAME} ${VERSION}"
@@ -64,6 +66,12 @@ clean:
 	@git gc --prune=0 --aggressive
 	@find . -name "*.orig" -type f -delete
 	@find . -name "*.log" -type f -delete
+
+seed:
+	@echo "...............................................................\n"
+	@echo $(PROJECT_NAME) seed
+	@echo ...............................................................
+	@MACARON_ENV=development go run db/seeds/main.go
 
 run:
 	@echo "...............................................................\n"
