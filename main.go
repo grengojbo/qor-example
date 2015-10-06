@@ -27,6 +27,8 @@ func main() {
 	fmt.Printf("Build Time: %s\n", BuildTime)
 	fmt.Printf("Git Commit Hash: %s\n", GitHash)
 	fmt.Printf("Listening on: %v\n", config.Config.Port)
+	// beego.Handler("/admin/*", mux)
+	// beego.Run()
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), mux); err != nil {
 		panic(err)
 	}
