@@ -7,13 +7,14 @@ import (
 
 type User struct {
 	gorm.Model
+	Email     string
 	Name      string
 	Password  string
 	FirstName string
 	LastNname string
 	Gender    string
 	Role      string
-	Email     []Email
+	// Email     []Email
 	Phone     []Phone
 	Social    []Social
 	Languages []Language `gorm:"many2many:user_languages;"`

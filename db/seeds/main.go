@@ -53,6 +53,7 @@ func createRecords() {
 	createSetting()
 	fmt.Println("--> Created setting.")
 
+	createAdminUser()
 	createUsers()
 	fmt.Println("--> Created users.")
 	createAddresses()
@@ -97,6 +98,17 @@ func createSetting() {
 	}
 }
 
+func createAdminUser() {
+	user := models.User{}
+	user.Email = "admin@example.com"
+	user.Name = "admin"
+	user.Gender = "Male"
+	user.CreatedAt = time.Now()
+	user.Role = "admin"
+	if err := db.DB.Create(&user).Error; err != nil {
+		log.Fatalf("create user (%v) failure, got err %v", user, err)
+	}
+}
 func createUsers() {
 	totalCount := 600
 	for i := 0; i < totalCount; i++ {
