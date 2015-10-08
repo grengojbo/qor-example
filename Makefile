@@ -50,6 +50,7 @@ save:
 
 install:
 	go get -v -u
+	go get -v -u github.com/gin-gonic/gin
 	go get -v -u github.com/manveru/faker
 
 release:
