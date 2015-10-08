@@ -52,7 +52,6 @@ save:
 
 install:
 	@go get -v -u
-	@#go get -v -u github.com/manveru/faker
 	@go get -v -u github.com/gin-gonic/gin
 	@go get -v -u github.com/codegangsta/cli
 	@go get -v -u github.com/azumads/faker
@@ -77,9 +76,9 @@ seed:
 
 run:
 	@echo "...............................................................\n"
-	@echo $(PROJECT_NAME)
-	@echo documentation API open in browser:
-	@echo	"	 http://localhost:8080/\n"
+	@echo Project: $(PROJECT_NAME)
+	@echo Open in browser:
+	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
 	@MACARON_ENV=development go run main.go
 

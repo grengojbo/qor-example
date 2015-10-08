@@ -12,7 +12,7 @@ var Config = struct {
 		Adapter  string `default:"mysql"`
 		User     string
 		Password string
-		Host     string `default:"localhosty"`
+		Host     string `default:"localhost"`
 		Port     uint   `default:"3306"`
 	}
 	I18n *i18n.I18n
