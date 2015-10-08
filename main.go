@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
+	// "github.com/gin-gonic/gin"
+	// "github.com/Unknwon/macaron"
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/config/admin"
 	_ "github.com/grengojbo/qor-example/db/migrations"
@@ -16,7 +18,17 @@ var (
 )
 
 func main() {
+	// r := gin.Default()
+
+	// r.GET("/ping", func(c *gin.Context) {
+	// 	c.String(200, "pong")
+	// })
+	// r.GET("/", func(c *gin.Context) {
+	// 	c.Redirect(http.StatusMovedPermanently, "/admin")
+	// })
+
 	mux := http.NewServeMux()
+	// m := macaron.Classic()
 	admin.Admin.MountTo("/admin", mux)
 
 	for _, path := range []string{"system", "javascripts", "stylesheets", "images"} {
@@ -27,9 +39,13 @@ func main() {
 	fmt.Printf("Build Time: %s\n", BuildTime)
 	fmt.Printf("Git Commit Hash: %s\n", GitHash)
 	fmt.Printf("Listening on: %v\n", config.Config.Port)
+	// m.Handlers("/admin/*", &mux)
+	// m.Run()
 	// beego.Handler("/admin/*", mux)
 	// beego.Run()
+	// r.Handlers("/admin/*", mux)
 	if err := http.ListenAndServe(fmt.Sprintf(":%d", config.Config.Port), mux); err != nil {
 		panic(err)
 	}
+	// r.Run(fmt.Sprintf(":%d", config.Config.Port))
 }
