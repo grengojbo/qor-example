@@ -16,35 +16,31 @@ func init() {
 	// Benefits Definations
 	discountRateArgument := Admin.NewResource(&struct {
 		Percentage uint
-		Category   string
 	}{})
 	discountRateArgument.Meta(&admin.Meta{Name: "Percentage", Label: "Percentage (e.g enter 10 for a 10% discount)"})
-	discountRateArgument.Meta(&admin.Meta{Name: "Category", Type: "select_one", Collection: []string{"All Products", "Bags", "Summer Shirts", "Pants"}})
 	promotion.RegisterBenefitHandler(promotion.BenefitHandler{
 		Name:     "Discount Rate",
 		Resource: discountRateArgument,
 	})
 
 	discountAmountArgument := Admin.NewResource(&struct {
-		Amount   float32
-		Category string
+		Amount float32
 	}{})
 	discountAmountArgument.Meta(&admin.Meta{Name: "Amount", Label: "Amount (e.g enter 10 for a $10 discount)"})
-	discountAmountArgument.Meta(&admin.Meta{Name: "Category", Type: "select_one", Collection: []string{"All Products", "Bags", "Summer Shirts", "Pants"}})
 	promotion.RegisterBenefitHandler(promotion.BenefitHandler{
 		Name:     "Discount Amount",
 		Resource: discountAmountArgument,
 	})
 
 	promotion.RegisterBenefitHandler(promotion.BenefitHandler{
-		Name: "shipping fee",
+		Name: "Shipping Fee",
 		Resource: Admin.NewResource(&struct {
 			Price float32
 		}{}),
 	})
 
 	promotion.RegisterBenefitHandler(promotion.BenefitHandler{
-		Name: "2th day shipping fee",
+		Name: "2nd Day Shipping Fee",
 		Resource: Admin.NewResource(&struct {
 			Price float32
 		}{}),
@@ -59,17 +55,21 @@ func init() {
 		}
 		return results
 	}
-	productWithPriceArgument := Admin.NewResource(&struct {
-		ProductCode string
-		Category    string
-		Quantity    uint
-		Price       float32
+	combinedDiscountArgument := Admin.NewResource(&struct {
+		ProductCodes []string
+		Category     string
+		Quantity     uint
+		Price        float32
+		Percentage   uint
+		Discount     uint
 	}{})
-	productWithPriceArgument.Meta(&admin.Meta{Name: "ProductCode", Type: "select_one", Collection: productCodeCollection})
-	productWithPriceArgument.Meta(&admin.Meta{Name: "Category", Type: "select_one", Collection: []string{"All Products", "Bags", "Summer Shirts", "Pants"}})
+	combinedDiscountArgument.Meta(&admin.Meta{Name: "ProductCodes", Type: "select_many", Collection: productCodeCollection})
+	combinedDiscountArgument.Meta(&admin.Meta{Name: "Category", Type: "select_one", Collection: []string{"All Products", "Bags", "Summer Shirts", "Pants"}})
+	combinedDiscountArgument.Meta(&admin.Meta{Name: "Percentage", Label: "Discount Percentage (e.g enter 10 for a 10% discount)"})
+	combinedDiscountArgument.Meta(&admin.Meta{Name: "Discount", Label: "Discount Amount (e.g enter 10 for a $10 discount)"})
 	promotion.RegisterBenefitHandler(promotion.BenefitHandler{
-		Name:     "Product With Price",
-		Resource: productWithPriceArgument,
+		Name:     "Combined Discounts",
+		Resource: combinedDiscountArgument,
 	})
 
 	// Rules Definations
@@ -81,6 +81,18 @@ func init() {
 	promotion.RegisterRuleHandler(promotion.RuleHandler{
 		Name:     "Amount Greater Than",
 		Resource: amountGreaterThanArgument,
+	})
+
+	quantityGreaterThanArgument := Admin.NewResource(&struct {
+		ProductCodes []string
+		Category     string
+		Quantity     int
+	}{})
+	quantityGreaterThanArgument.Meta(&admin.Meta{Name: "ProductCodes", Type: "select_many", Collection: productCodeCollection})
+	quantityGreaterThanArgument.Meta(&admin.Meta{Name: "Category", Type: "select_one", Collection: []string{"All Products", "Bags", "Summer Shirts", "Pants"}})
+	promotion.RegisterRuleHandler(promotion.RuleHandler{
+		Name:     "Quantity Greater Than",
+		Resource: quantityGreaterThanArgument,
 	})
 
 	userGroupArgument := Admin.NewResource(&struct {
@@ -95,15 +107,16 @@ func init() {
 	promotion.RegisterRuleHandler(promotion.RuleHandler{
 		Name: "From Link",
 		Resource: Admin.NewResource(&struct {
-			URL string
+			VariableName string
+			Value        string
 		}{}),
 	})
 
 	hasProductrgument := Admin.NewResource(&struct {
-		ProductCode string
-		Category    string
+		ProductCodes []string
+		Category     string
 	}{})
-	hasProductrgument.Meta(&admin.Meta{Name: "ProductCode", Type: "select_one", Collection: productCodeCollection})
+	hasProductrgument.Meta(&admin.Meta{Name: "ProductCodes", Type: "select_many", Collection: productCodeCollection})
 	hasProductrgument.Meta(&admin.Meta{Name: "Category", Type: "select_one", Collection: []string{"All Products", "Bags", "Summer Shirts", "Pants"}})
 	promotion.RegisterRuleHandler(promotion.RuleHandler{
 		Name:     "Has Product",

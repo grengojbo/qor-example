@@ -2,6 +2,7 @@ OSNAME=$(shell uname)
 
 GO=$(shell which go)
 
+CUR_TIME=$(shell date '+%Y-%m-%d_%H:%M:%S')
 # Program version
 VERSION=$(shell cat VERSION)
 
@@ -32,12 +33,13 @@ help:
 	@echo "Project: $(PROJECT_NAME) | current dir: $(PROJECT_DIR)"
 	@echo "version: $(VERSION) GIT_DIRTY: $(GIT_DIRTY)\n"
 	@#echo "Autocomplete exec -> PROG=$(BIN_NAME) source ./autocomplete/bash_autocomplete\n"
-	@echo "make init - Load godep"
-	@echo "make save - Save project libs"
+	@echo "make init    - Load godep"
+	@echo "make save    - Save project libs"
 	@echo "make install - Install packages"
 	@echo "make clean   - Clean .orig, .log files"
-	@#echo "make run     - Run project debug mode"
-	@echo "make build - Build for current OS project"
+	@echo "make run     - Run project debug mode"
+	@echo "make seed    - Run project seeds"
+	@echo "make build   - Build for current OS project"
 	@echo "make release - Build release project"
 	@#echo "make docs"   - Project documentation
 	@echo "...............................................................\n"
@@ -49,9 +51,10 @@ save:
 	godep save
 
 install:
-	go get -v -u
-	go get -v -u github.com/gin-gonic/gin
-	go get -v -u github.com/manveru/faker
+	@go get -v -u
+	@#go get -v -u github.com/manveru/faker
+	@go get -v -u github.com/gin-gonic/gin
+	@go get -v -u github.com/azumads/faker
 
 release:
 	@echo "building release ${BIN_NAME} ${VERSION}"
@@ -64,6 +67,12 @@ clean:
 	@git gc --prune=0 --aggressive
 	@find . -name "*.orig" -type f -delete
 	@find . -name "*.log" -type f -delete
+
+seed:
+	@echo "...............................................................\n"
+	@echo $(PROJECT_NAME) seed
+	@echo ...............................................................
+	@MACARON_ENV=development go run db/seeds/main.go
 
 run:
 	@echo "...............................................................\n"
@@ -84,7 +93,7 @@ push:
 
 build: clean
 	@echo "Building ${BIN_NAME} ${VERSION}"
-	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w' -o $(BIN_NAME) main.go
+	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o $(BIN_NAME) main.go
 
 docs:
 	godoc -http=:6060 -index

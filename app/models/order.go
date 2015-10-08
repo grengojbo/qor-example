@@ -17,6 +17,7 @@ type Order struct {
 	BillingAddressID  uint
 	BillingAddress    Address
 	OrderItems        []OrderItem
+	State             string
 	// transition.Transition
 }
 
