@@ -3,6 +3,7 @@
 *.a
 *.so
 *.orig
+*.log
 
 # Folders
 _obj
@@ -17,8 +18,6 @@ _test
 _cgo_defun.c
 _cgo_gotypes.go
 _cgo_export.*
-*.orig
-*.log
 
 _testmain.go
 
