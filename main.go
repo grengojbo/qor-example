@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"time"
 
-	// "github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/config/admin"
@@ -36,12 +35,11 @@ func main() {
 
 	r := gin.Default()
 	r.LoadHTMLGlob("app/views/*.tmpl")
-	// for _, path := range []string{"system", "javascripts", "stylesheets", "images"} {
-	// 	// mux.Handle(fmt.Sprintf("/%s/", path), http.FileServer(http.Dir("public")))
-	// 	// r.Use(static.Serve(fmt.Sprintf("/%s", path), static.LocalFile("public", false)))
-	// }
+	for _, path := range []string{"system", "javascripts", "stylesheets", "images"} {
+		// mux.Handle(fmt.Sprintf("/%s/", path), http.FileServer(http.Dir("public")))
+		r.Static(fmt.Sprintf("/%s", path), fmt.Sprintf("public/%s", path))
+	}
 
-	// r.Use(static.Serve("/javascripts", static.LocalFile("/public", false)))
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
@@ -64,7 +62,6 @@ func main() {
 	// 	}
 	// })
 	r.GET("/logout", func(c *gin.Context) {
-		// c.String(200, "pong")
 		c.Redirect(http.StatusMovedPermanently, "/login")
 	})
 
