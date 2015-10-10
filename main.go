@@ -6,7 +6,6 @@ import (
 	"runtime"
 	"time"
 
-	// "github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/config/admin"
@@ -36,18 +35,17 @@ func main() {
 
 	r := gin.Default()
 	r.LoadHTMLGlob("app/views/*.tmpl")
-	// for _, path := range []string{"system", "javascripts", "stylesheets", "images"} {
-	// 	// mux.Handle(fmt.Sprintf("/%s/", path), http.FileServer(http.Dir("public")))
-	// 	// r.Use(static.Serve(fmt.Sprintf("/%s", path), static.LocalFile("public", false)))
-	// }
+	for _, path := range []string{"system", "javascripts", "stylesheets", "images"} {
+		// mux.Handle(fmt.Sprintf("/%s/", path), http.FileServer(http.Dir("public")))
+		r.Static(fmt.Sprintf("/%s", path), fmt.Sprintf("public/%s", path))
+	}
 
-	// r.Use(static.Serve("/javascripts", static.LocalFile("/public", false)))
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
 	r.GET("/login", func(c *gin.Context) {
 		c.HTML(200, "login.tmpl", gin.H{
-			// "roomid":    roomid,
+			"title": admin.Admin.SiteName,
 			// "nick":      nick,
 			"timestamp": time.Now().Unix(),
 		})
@@ -55,15 +53,16 @@ func main() {
 	r.POST("/login", func(c *gin.Context) {
 		var login admin.Auth
 		if c.BindJSON(&login) == nil {
-			if form.User == "demo" && form.Password == "demo" {
-				c.JSON(http.StatusOK, gin.H{"status": "sunceful"})
+			if login.User == "demo" && Password.Password == "demo" {
+				c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ok"})
 			} else {
-				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
 			}
-		}
+		} else {
+				c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Bad request"})
+			}
 	})
 	r.GET("/logout", func(c *gin.Context) {
-		// c.String(200, "pong")
 		c.Redirect(http.StatusMovedPermanently, "/login")
 	})
 

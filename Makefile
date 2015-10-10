@@ -79,6 +79,7 @@ run:
 	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
 	@MACARON_ENV=development go run main.go
+	@exit 0;
 
 test:
 	@go test -v ./...
