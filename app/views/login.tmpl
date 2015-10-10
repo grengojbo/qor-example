@@ -82,38 +82,53 @@ body {
 <!-- <script src="/admin/assets/javascripts/app.js"></script> -->
 <!-- <script src="/admin/assets/javascripts/qor_demo.js"></script> -->
 <script>
-  $( document ).ready(function() {
-    function make_base_auth(user, pass) {
+function make_base_auth(user, pass) {
       var tok = user + ':' + pass;
       var hash = btoa(tok);
-      return "Basic " + hash;
+      return 'Basic ' + hash;
     }
+
+    function createToast(message) {
+      'use strict';
+      var snackbar = document.createElement('div'),
+        text = document.createElement('div');
+      snackbar.classList.add('mdl-snackbar');
+      text.classList.add('mdl-snackbar__text');
+      text.innerText = message;
+      snackbar.appendChild(text);
+      document.body.appendChild(snackbar);
+      // Remove after 10 seconds
+      setTimeout(function () {
+        snackbar.remove();
+      }, 10000);
+}
+$(document).ready(function () {
     $('#loader').hide();
-    $('#loginSubmit').on('click', function(){
+    $('#loginSubmit').on('click', function () {
       // event.preventDefault();
-      var username = $("#username").val();
-      var password = $("#userpass").val();
+      var username = $('#username').val();
+      var password = $('#userpass').val();
       // var b = make_base_auth(username, password);
       var str = '{"username": "' + username + '", "password" : "' + password + '"}';
       // console.log('submit login:' + b + ' json:' + str);
       $('#loading').addClass('is-active');
 
-    $('#loader').show();
+      $('#loader').show();
       $.ajax({
-        type: "POST",
-        url: "/login",  // Send the login info to this page
+        type: 'POST',
+        url: '/login',  // Send the login info to this page
         dataType: 'json',
         data: str,
-        success: function(msg) {
+        success: function (msg) {
           // $('#loader').hide();
           window.location = '/admin';
         },
-        error: function(msg) {
+        error: function (msg) {
           $('#loader').hide();
           console.log('error' + msg);
         }
         // complete: function() { alert("Завершение выполнения"); }
-      //     //     $('#login_response').html(login_response);
+        //     $('#login_response').html(login_response);
       });
     });
   });
