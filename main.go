@@ -52,17 +52,16 @@ func main() {
 			"timestamp": time.Now().Unix(),
 		})
 	})
-	// r.POST("/login", func(c *gin.Context) {
-	// 	var form models.User
-	// 	// This will infer what binder to use depending on the content-type header.
-	// 	if c.Bind(&form) == nil {
-	// 		if form.User == "manu" && form.Password == "123" {
-	// 			c.JSON(http.StatusOK, gin.H{"status": "you are logged in"})
-	// 		} else {
-	// 			c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
-	// 		}
-	// 	}
-	// })
+	r.POST("/login", func(c *gin.Context) {
+		var login admin.Auth
+		if c.BindJSON(&login) == nil {
+			if form.User == "demo" && form.Password == "demo" {
+				c.JSON(http.StatusOK, gin.H{"status": "sunceful"})
+			} else {
+				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized"})
+			}
+		}
+	})
 	r.GET("/logout", func(c *gin.Context) {
 		// c.String(200, "pong")
 		c.Redirect(http.StatusMovedPermanently, "/login")
