@@ -1,75 +1,121 @@
 <!DOCTYPE html>
-<html lang="en-US"><head>
+<html>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-
-    <title>
-      Admin
- - Qor DEMO
-    </title>
+  <title></title>
 
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link type="image/x-icon" rel="shortcut icon" href="/img/favicon.ico">
     <link type="image/x-icon" rel="icon" href="/img/favicon.ico">
-
-
-    <link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/material.min.css"><link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/cropper.min.css"><link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/chosen.min.css"><link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/redactor.css"><link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/qor.css"><link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/app.css">
-    <link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/qor_demo.css">
-
-    <script src="/admin/assets/javascripts/jquery.min.js"></script>
-  </head>
-
-  <body class=" qor-theme-slideout">
-
-    <a class="visuallyhidden" href="#content" tabindex="1">Skip to content</a>
-
-    <div class="mdl-layout__container"><div class="mdl-layout mdl-js-layout mdl-layout--fixed-drawer mdl-layout--fixed-header qor-layout has-drawer is-upgraded" data-upgraded=",MaterialLayout">
-      <header class="mdl-layout__header is-casting-shadow"><div class="mdl-layout__drawer-button"></div>
-        <div class="mdl-layout__header-row">
-          <span class="mdl-layout-title">Admin
-</span>
-
-<div class="mdl-layout-spacer"></div>
-<small class="mdl-layout-text mdl-layout--large-screen-only">Logged in as admin</small>
-<nav class="mdl-navigation mdl-layout--large-screen-only">
-  <a class="mdl-navigation__link" href="/logout"><i class="material-icons">exit_to_app</i></a>
-</nav>
-
-
-        </div>
-      </header>
-
-      <div class="mdl-layout__drawer">
-        <div class="qor-layout__sidebar">
-  <div class="sidebar-header">
-    <a href="/admin"><span class="visuallyhidden">QOR</span></a><a href="/" target="_blank">View Site <i class="material-icons md-14" aria-hidden="true">open_in_new</i></a>
-  </div>
-
-
+  <link type="text/css" rel="stylesheet" href="/admin/assets/stylesheets/material.min.css">
+  <script src="/admin/assets/javascripts/jquery.min.js"></script>
+<style>
+body {
+    font-family: Roboto,Helvetica,Arial,sans-serif;
+    background-color: #f5f5f5;
+}
+.mdl-layout {
+  align-items: center;
+  justify-content: center;
+}
+.mdl-layout__content {
+  padding: 24px;
+  flex: none;
+}
+.mdl-card__actions {
+  text-align: right;
+}
+.loader {
+  position: absolute;
+  //width: $width;
+  //height: $width;
+  left: 50%;
+  top: 50%;
+}
+.loader-body {
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   width: 100%;
+    height: 100%;
+    z-index: 1000;
+    position: absolute;
+    min-height: 100%;
+    background-color: rgba(199, 199, 199, 0.4);
+}
+</style>
+</head>
+<body class="qor-theme-slideout">
+<div class="loader-body" id="loader">
+  <div class="mdl-spinner mdl-js-spinner" id="loading"></div>
 </div>
-
+<!-- Пожалуйста, введите корректные имя пользователя и пароль для аккаунта. Оба поля могут быть чувствительны к регистру. -->
+<div class="mdl-layout mdl-js-layout mdl-color--grey-100">
+  <main class="mdl-layout__content">
+    <div class="mdl-card">
+      <div class="mdl-card__title mdl-color--primary mdl-color-text--white">
+        <h2 class="mdl-card__title-text">Log in</h2>
       </div>
-
-      <main class="mdl-layout__content qor-page" id="content">
-        <div class="qor-page__body">
-
-
-
-
-
-
-
-
+      <div class="mdl-card__supporting-text">
+        <form action="/login" role="login" method="post" id="login-form">
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" minlength="4" maxlength="254" name="username" tabindex="1" id="username" />
+            <label class="mdl-textfield__label" for="username">Username</label>
+          </div>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="password" id="userpass" name="password" tabindex="2" />
+            <label class="mdl-textfield__label" for="userpass">Password</label>
+          </div>
+        </form>
+      </div>
+      <div class="mdl-card__actions">
+      <!-- remember -->
+        <button class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect" id="loginSubmit" tabindex="3">OK</button>
+      </div>
+    </div>
+  </main>
 </div>
+<script src="/admin/assets/javascripts/material.min.js"></script>
+<!-- <script src="/admin/assets/javascripts/qor.js"></script> -->
+<!-- <script src="/admin/assets/javascripts/app.js"></script> -->
+<!-- <script src="/admin/assets/javascripts/qor_demo.js"></script> -->
+<script>
+  $( document ).ready(function() {
+    function make_base_auth(user, pass) {
+      var tok = user + ':' + pass;
+      var hash = btoa(tok);
+      return "Basic " + hash;
+    }
+    $('#loader').hide();
+    $('#loginSubmit').on('click', function(){
+      // event.preventDefault();
+      var username = $("#username").val();
+      var password = $("#userpass").val();
+      // var b = make_base_auth(username, password);
+      var str = '{"username": "' + username + '", "password" : "' + password + '"}';
+      // console.log('submit login:' + b + ' json:' + str);
+      $('#loading').addClass('is-active');
 
-      </main>
-    <div class="mdl-layout__obfuscator"></div></div></div>
-
-
-    <script src="/admin/assets/javascripts/material.min.js"></script><script src="/admin/assets/javascripts/redactor.min.js"></script><script src="/admin/assets/javascripts/cropper.min.js"></script><script src="/admin/assets/javascripts/chosen.jquery.min.js"></script><script src="/admin/assets/javascripts/qor.js"></script><script src="/admin/assets/javascripts/app.js"></script>
-    <script src="/admin/assets/javascripts/qor_demo.js"></script>
-
-
-
-<div class="qor-slideout"><div class="qor-slideout__header"><button type="button" class="mdl-button mdl-button--icon mdl-js-button mdl-js-repple-effect qor-slideout__close" data-dismiss="slideout" data-upgraded=",MaterialButton"><span class="material-icons">close</span></button><h3 class="qor-slideout__title"></h3></div><div class="qor-slideout__body"></div></div></body></html>
+    $('#loader').show();
+      $.ajax({
+        type: "POST",
+        url: "/login",  // Send the login info to this page
+        dataType: 'json',
+        data: str,
+        success: function() {
+          // $('#loader').hide();
+          alert("Успешное выполнение"); },
+        error: function() {
+          // $('#loader').hide();
+          alert("Ошибка выполнения");
+        }
+        // complete: function() { alert("Завершение выполнения"); }
+      //     //     $('#login_response').html(login_response);
+      });
+    });
+  });
+</script>
+</body>
+</html>
