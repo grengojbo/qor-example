@@ -29,6 +29,7 @@ func main() {
 	fmt.Printf("Build Time: %s\n", BuildTime)
 	fmt.Printf("Git Commit Hash: %s\n", GitHash)
 	fmt.Printf("Listening on: %v\n", config.Config.Port)
+	fmt.Printf("Secret: %v\n", admin.PasswordBcrypt("admin"))
 	ConfigRuntime()
 	mux := http.NewServeMux()
 	admin.Admin.MountTo("/admin", mux)
@@ -53,8 +54,16 @@ func main() {
 	r.POST("/login", func(c *gin.Context) {
 		var login admin.Auth
 		if c.BindJSON(&login) == nil {
-			if login.User == "demo" && login.Password == "demo" {
-				c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ok"})
+
+			// if login.User == "demo" && login.Password == "demo" {
+			if ok, user := login.GetUser(); ok != false {
+				// passwd := admin.PasswordBcrypt(login.Password)
+				// fmt.Printf("Password: %v\n", passwd)
+				if err := admin.VerifyPassword(user.Password, login.Password); err != nil {
+					c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
+				} else {
+					c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ok"})
+				}
 			} else {
 				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
 			}
