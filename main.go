@@ -53,14 +53,14 @@ func main() {
 	r.POST("/login", func(c *gin.Context) {
 		var login admin.Auth
 		if c.BindJSON(&login) == nil {
-			if login.User == "demo" && Password.Password == "demo" {
+			if login.User == "demo" && login.Password == "demo" {
 				c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ok"})
 			} else {
 				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
 			}
 		} else {
-				c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Bad request"})
-			}
+			c.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Bad request"})
+		}
 	})
 	r.GET("/logout", func(c *gin.Context) {
 		c.Redirect(http.StatusMovedPermanently, "/login")

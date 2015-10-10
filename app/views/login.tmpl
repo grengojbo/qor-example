@@ -105,14 +105,12 @@ body {
         dataType: 'json',
         data: str,
         success: function(msg) {
-          $('#loader').hide();
-          // alert("Успешное выполнение");
-          windows.location = '/admin';
+          // $('#loader').hide();
+          window.location = '/admin';
         },
         error: function(msg) {
           $('#loader').hide();
           console.log('error' + msg);
-          // alert("Ошибка выполнения");
         }
         // complete: function() { alert("Завершение выполнения"); }
       //     //     $('#login_response').html(login_response);
