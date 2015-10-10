@@ -10,7 +10,10 @@ import (
 
 // var DB *gorm.DB
 
-type Auth struct{}
+type Auth struct {
+	User     string `form:"username" json:"username" binding:"required"`
+	Password string `form:"password" json:"password" binding:"required"`
+}
 
 func (Auth) LoginURL(c *admin.Context) string {
 	return "/login"

@@ -51,10 +51,9 @@ func main() {
 		})
 	})
 	r.POST("/login", func(c *gin.Context) {
-	// 	var form models.User
-	// 	// This will infer what binder to use depending on the content-type header.
-		if c.Bind(&form) == nil {
-			if form.User == "admin" && form.Password == "admin" {
+		var login admin.Auth
+		if c.BindJSON(&login) == nil {
+			if login.User == "demo" && Password.Password == "demo" {
 				c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ok"})
 			} else {
 				c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
