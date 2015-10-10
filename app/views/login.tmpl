@@ -104,12 +104,15 @@ body {
         url: "/login",  // Send the login info to this page
         dataType: 'json',
         data: str,
-        success: function() {
-          // $('#loader').hide();
-          alert("Успешное выполнение"); },
-        error: function() {
-          // $('#loader').hide();
-          alert("Ошибка выполнения");
+        success: function(msg) {
+          $('#loader').hide();
+          // alert("Успешное выполнение");
+          windows.location = '/admin';
+        },
+        error: function(msg) {
+          $('#loader').hide();
+          console.log('error' + msg);
+          // alert("Ошибка выполнения");
         }
         // complete: function() { alert("Завершение выполнения"); }
       //     //     $('#login_response').html(login_response);
