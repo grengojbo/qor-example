@@ -11,6 +11,7 @@ import (
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/config/admin"
 	_ "github.com/grengojbo/qor-example/db/migrations"
+	// "github.com/grengojbo/qor-example/db"
 )
 
 var (
@@ -59,6 +60,7 @@ func main() {
 	r.GET("/login", func(c *gin.Context) {
 		// var cnt int
 		session := sessions.Default(c)
+		// if s, ok := db.DB.Get();
 		count := session.Get("count")
 		if count == nil {
 			count = 0
