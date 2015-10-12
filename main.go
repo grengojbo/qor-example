@@ -100,6 +100,9 @@ func main() {
 						session.Save()
 						c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
 					} else {
+						expiration := time.Now().Add(365 * 24 * time.Hour)
+						cookie := http.Cookie{Name: "userid", Value: string(user.ID), Expires: expiration}
+						http.SetCookie(c.Writer, &cookie)
 						session.Set("count", 0)
 						session.Set("_auth_user_id", user.ID)
 						session.Set("user", user)
