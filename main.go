@@ -11,7 +11,6 @@ import (
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/config/admin"
 	_ "github.com/grengojbo/qor-example/db/migrations"
-	// "github.com/grengojbo/qor-example/db"
 )
 
 var (
@@ -39,14 +38,14 @@ func main() {
 
 	r := gin.Default()
 	if conf.Session.Adapter == "redis" {
-		fmt.Println("Connect to redis")
 		store, err := sessions.NewRedisStore(10, conf.Redis.Protocol, fmt.Sprintf("%v:%v", conf.Redis.Host, conf.Redis.Port), "", []byte(conf.Secret))
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println("Start init session")
 		r.Use(sessions.Sessions(conf.Session.Name, store))
-		fmt.Println("Finish init session")
+	} else if conf.Session.Adapter == "cookie" {
+		store := sessions.NewCookieStore([]byte(conf.Secret))
+		r.Use(sessions.Sessions(conf.Session.Name, store))
 	}
 	r.LoadHTMLGlob("app/views/*.tmpl")
 	for _, path := range []string{"system", "javascripts", "stylesheets", "images"} {
@@ -60,7 +59,6 @@ func main() {
 	r.GET("/login", func(c *gin.Context) {
 		// var cnt int
 		session := sessions.Default(c)
-		// if s, ok := db.DB.Get();
 		count := session.Get("count")
 		if count == nil {
 			count = 0
@@ -73,8 +71,7 @@ func main() {
 		session.Set("ip", c.ClientIP())
 		session.Save()
 		c.HTML(200, "login.tmpl", gin.H{
-			"title": admin.Admin.SiteName,
-			// "nick":      nick,
+			"title":     admin.Admin.SiteName,
 			"timestamp": time.Now().Unix(),
 		})
 	})
@@ -102,19 +99,10 @@ func main() {
 						session.Save()
 						c.JSON(http.StatusUnauthorized, gin.H{"status": "unauthorized", "message": "User unauthorized"})
 					} else {
-						expiration := time.Now().Add(365 * 24 * time.Hour)
-						cookie := http.Cookie{Name: "userid", Value: string(user.ID), Expires: expiration}
-						http.SetCookie(c.Writer, &cookie)
 						session.Set("count", 0)
 						session.Set("_auth_user_id", user.ID)
-						session.Set("user", user)
-						// c.Request.Cookie("userid", user.ID, "", "",)
+						// session.Set("user", user)
 						session.Save()
-						// u := session.Get("user")
-						// fmt.Printf("%v\n", u)
-						// fmt.Println("-------------------------")
-						// fmt.Printf("%v\n", u.Email)
-						// fmt.Println("-------------------------")
 						c.JSON(http.StatusOK, gin.H{"status": "success", "message": "Ok"})
 					}
 				} else {

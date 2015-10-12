@@ -24,7 +24,7 @@ var Config = struct {
 	}
 	Session struct {
 		Name    string `default:"sessionid"`
-		Adapter string `default:"redis"`
+		Adapter string `default:"cookie"`
 	}
 	I18n   *i18n.I18n
 	Secret string `default:"secret"`

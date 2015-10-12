@@ -51,6 +51,8 @@ save:
 	@godep save
 
 install:
+	@go get -v -u
+	@go get -v -u github.com/gorilla/sessions
 	@go get -v -u github.com/gin-gonic/gin
 	@go get -v -u github.com/gin-gonic/contrib/sessions
 	@go get -v -u github.com/codegangsta/cli

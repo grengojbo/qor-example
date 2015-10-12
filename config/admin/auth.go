@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"code.google.com/p/go.crypto/bcrypt"
-	// "github.com/gin-gonic/contrib/sessions"
+	"github.com/gorilla/sessions"
 	"github.com/grengojbo/qor-example/app/models"
 	// "github.com/jinzhu/gorm"
 	"crypto/hmac"
@@ -37,15 +37,16 @@ func (Auth) LogoutURL(c *admin.Context) string {
 }
 
 func (Auth) GetCurrentUser(c *admin.Context) qor.CurrentUser {
-	// session := sessions.Default(c)
+	var store = sessions.NewCookieStore([]byte(config.Config.Secret))
+	session, err := store.Get(c.Request, config.Config.Session.Name)
+	if err != nil {
+		fmt.Printf("%v\n", err)
+		// } else {
+		// 	fmt.Printf("%v\n", session)
+	}
 	var currentUser models.User
-	if sessionid, err := c.Request.Cookie(config.Config.Session.Name); err == nil {
-		if l10nMode, ok := c.DB.Get("l10n:mode"); ok {
-			fmt.Printf("---------> l10n:mode: %v\n", l10nMode)
-
-		}
-		fmt.Printf("---------> Session name: %v\n", sessionid)
-		if !c.GetDB().Where("name = ?", "admin").First(&currentUser).RecordNotFound() {
+	if session.Values["_auth_user_id"] != nil {
+		if !c.GetDB().Where("id = ?", session.Values["_auth_user_id"]).First(&currentUser).RecordNotFound() {
 			return &currentUser
 		}
 	}
