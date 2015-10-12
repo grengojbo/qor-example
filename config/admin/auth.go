@@ -40,9 +40,11 @@ func (Auth) GetCurrentUser(c *admin.Context) qor.CurrentUser {
 	// session := sessions.Default(c)
 	var currentUser models.User
 	if sessionid, err := c.Request.Cookie(config.Config.Session.Name); err == nil {
-		fl := c.GetFlashes()
+		if l10nMode, ok := c.DB.Get("l10n:mode"); ok {
+			fmt.Printf("---------> l10n:mode: %v\n", l10nMode)
+
+		}
 		fmt.Printf("---------> Session name: %v\n", sessionid)
-		fmt.Printf("---------> Flashes: %v\n", fl)
 		if !c.GetDB().Where("name = ?", "admin").First(&currentUser).RecordNotFound() {
 			return &currentUser
 		}
