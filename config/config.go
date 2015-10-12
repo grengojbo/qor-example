@@ -22,9 +22,13 @@ var Config = struct {
 		Protocol string `default:"tcp"`
 		Password string
 	}
-	I18n    *i18n.I18n
-	Session string `default:"secret"`
-	Secret  string `default:"secret"`
+	Session struct {
+		Name    string `default:"sessionid"`
+		Adapter string `default:"redis"`
+	}
+	I18n   *i18n.I18n
+	Secret string `default:"secret"`
+	Limit  int    `default:"5"`
 }{}
 
 func init() {
