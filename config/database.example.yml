@@ -6,3 +6,10 @@ db:
   host: 127.0.0.1
   port: 3306
   debug: true
+secret: secret
+limit: 5
+redis:
+  host: localhost
+session:
+  name: sessionid
+  adapter: cookie
