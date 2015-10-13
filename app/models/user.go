@@ -7,11 +7,12 @@ import (
 
 type User struct {
 	gorm.Model
-	Email     string
-	Name      string
-	Password  string
-	FirstName string
-	LastName  string
+	Email     string `sql:"type:varchar(75)" json:"email"`
+	Name      string `gorm:"column:username" sql:"type:varchar(30);unique_index" json:"username"`
+	Password  string `sql:"type:varchar(128)" json:"-"`
+	IsActive  bool   `gorm:"column:is_active"json:"active"`
+	FirstName string `sql:"type:varchar(30)" json:"first_name"`
+	LastName  string `sql:"type:varchar(30)" json:"last_name"`
 	Gender    string
 	Role      string
 	// Email     []Email
@@ -24,9 +25,9 @@ type User struct {
 	// Avatar    media_library.FileSystem
 }
 
-// func (user User) TableName() string {
-//     return "auth_user"
-// }
+func (user User) TableName() string {
+	return "auth_user"
+}
 
 type Language struct {
 	gorm.Model
