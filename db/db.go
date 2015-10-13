@@ -27,11 +27,19 @@ func init() {
 	var conStr string
 
 	dbConfig := config.Config.DB
-	if config.Config.DB.Adapter == "mysql" {
-		conStr = fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=True&loc=Local&charset=utf8", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Name)
+	if dbConfig.Adapter == "mysql" {
+		if dbConfig.Host == "localhost" {
+			conStr = fmt.Sprintf("%v:%v@/%v?parseTime=True&loc=Local&charset=utf8", dbConfig.User, dbConfig.Password, dbConfig.Name)
+		} else {
+			conStr = fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=True&loc=Local&charset=utf8", dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.Name)
+		}
 		db, err = gorm.Open("mysql", conStr)
 	} else if config.Config.DB.Adapter == "postgres" {
-		conStr = fmt.Sprintf("user=%v password=%v dbname=%v sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Name)
+		if dbConfig.Host == "localhost" {
+			conStr = fmt.Sprintf("user=%v password=%v dbname=%v sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Name)
+		} else {
+			conStr = fmt.Sprintf("user=%v password=%v dbname=%v host=%v port=%v sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Name, dbConfig.Host, dbConfig.Port)
+		}
 		db, err = gorm.Open("postgres", conStr)
 	} else {
 		panic(errors.New("not supported database adapter"))
@@ -39,7 +47,7 @@ func init() {
 
 	if err == nil {
 		DB = &db
-		DB.LogMode(true)
+		DB.LogMode(dbConfig.Debug)
 		Publish = publish.New(DB)
 		config.Config.I18n = i18n.New(database.New(DB))
 

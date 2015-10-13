@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/azumads/faker"
 	"github.com/grengojbo/qor-example/db"
 	"github.com/jinzhu/configor"
-	"github.com/manveru/faker"
 	"github.com/qor/qor/publish"
 )
 
