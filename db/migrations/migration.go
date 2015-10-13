@@ -28,6 +28,7 @@ func init() {
 
 	AutoMigrate(&models.Setting{})
 
+	AutoMigrate(&models.User{})
 }
 
 func AutoMigrate(values ...interface{}) {
