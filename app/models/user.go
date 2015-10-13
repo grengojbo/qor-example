@@ -11,7 +11,7 @@ type User struct {
 	Name      string
 	Password  string
 	FirstName string
-	LastNname string
+	LastName  string
 	Gender    string
 	Role      string
 	// Email     []Email
@@ -23,6 +23,10 @@ type User struct {
 	// Location  string
 	// Avatar    media_library.FileSystem
 }
+
+// func (user User) TableName() string {
+//     return "auth_user"
+// }
 
 type Language struct {
 	gorm.Model
