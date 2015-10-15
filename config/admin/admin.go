@@ -1,14 +1,14 @@
 package admin
 
 import (
-	"fmt"
-	"strconv"
+	// "fmt"
+	// "strconv"
 	"strings"
 
 	"github.com/grengojbo/qor-example/app/models"
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/db"
-	"github.com/jinzhu/gorm"
+	// "github.com/jinzhu/gorm"
 	"github.com/qor/qor"
 	"github.com/qor/qor/admin"
 	"github.com/qor/qor/resource"
@@ -26,46 +26,46 @@ func init() {
 	Admin.SetAuth(Auth{})
 
 	// Add Dashboard
-	// Admin.AddMenu(&admin.Menu{Name: "Dashboard", Link: "/admin"})
+	Admin.AddMenu(&admin.Menu{Name: "Dashboard", Link: "/admin"})
 
 	// Add Asset Manager, for rich editor
-	assetManager := Admin.AddResource(&admin.AssetManager{}, &admin.Config{Invisible: true})
+	// assetManager := Admin.AddResource(&admin.AssetManager{}, &admin.Config{Invisible: true})
 
 	// Add Product
-	product := Admin.AddResource(&models.Product{}, &admin.Config{Menu: []string{"Product Management"}})
-	product.Meta(&admin.Meta{Name: "MadeCountry", Type: "select_one", Collection: Countries})
-	product.Meta(&admin.Meta{Name: "Description", Type: "rich_editor", Resource: assetManager})
-	sizeVariation := Admin.NewResource(&models.SizeVariation{}, &admin.Config{Invisible: true})
-	sizeVariation.NewAttrs("-ColorVariation")
-	sizeVariation.EditAttrs("-ColorVariation")
-	colorVariation := Admin.NewResource(&models.ColorVariation{}, &admin.Config{Invisible: true})
-	colorVariation.Meta(&admin.Meta{Name: "SizeVariations", Resource: sizeVariation})
-	colorVariation.NewAttrs("-Product")
-	colorVariation.EditAttrs("-Product")
-	product.Meta(&admin.Meta{Name: "ColorVariations", Resource: colorVariation})
+	// product := Admin.AddResource(&models.Product{}, &admin.Config{Menu: []string{"Product Management"}})
+	// product.Meta(&admin.Meta{Name: "MadeCountry", Type: "select_one", Collection: Countries})
+	// product.Meta(&admin.Meta{Name: "Description", Type: "rich_editor", Resource: assetManager})
+	// sizeVariation := Admin.NewResource(&models.SizeVariation{}, &admin.Config{Invisible: true})
+	// sizeVariation.NewAttrs("-ColorVariation")
+	// sizeVariation.EditAttrs("-ColorVariation")
+	// colorVariation := Admin.NewResource(&models.ColorVariation{}, &admin.Config{Invisible: true})
+	// colorVariation.Meta(&admin.Meta{Name: "SizeVariations", Resource: sizeVariation})
+	// colorVariation.NewAttrs("-Product")
+	// colorVariation.EditAttrs("-Product")
+	// product.Meta(&admin.Meta{Name: "ColorVariations", Resource: colorVariation})
 
-	for _, country := range Countries {
-		var country = country
-		product.Scope(&admin.Scope{Name: country, Group: "Made Country", Handle: func(db *gorm.DB, ctx *qor.Context) *gorm.DB {
-			return db.Where("made_country = ?", country)
-		}})
-	}
+	// for _, country := range Countries {
+	// 	var country = country
+	// 	product.Scope(&admin.Scope{Name: country, Group: "Made Country", Handle: func(db *gorm.DB, ctx *qor.Context) *gorm.DB {
+	// 		return db.Where("made_country = ?", country)
+	// 	}})
+	// }
 
-	product.IndexAttrs("-ColorVariations")
+	// product.IndexAttrs("-ColorVariations")
 
-	Admin.AddResource(&models.Color{}, &admin.Config{Menu: []string{"Product Management"}})
-	Admin.AddResource(&models.Size{}, &admin.Config{Menu: []string{"Product Management"}})
-	Admin.AddResource(&models.Category{}, &admin.Config{Menu: []string{"Product Management"}})
-	Admin.AddResource(&models.Collection{}, &admin.Config{Menu: []string{"Product Management"}})
+	// Admin.AddResource(&models.Color{}, &admin.Config{Menu: []string{"Product Management"}})
+	// Admin.AddResource(&models.Size{}, &admin.Config{Menu: []string{"Product Management"}})
+	// Admin.AddResource(&models.Category{}, &admin.Config{Menu: []string{"Product Management"}})
+	// Admin.AddResource(&models.Collection{}, &admin.Config{Menu: []string{"Product Management"}})
 
 	// Add Order
-	orderItem := Admin.NewResource(&models.OrderItem{})
-	orderItem.Meta(&admin.Meta{Name: "SizeVariation", Type: "select_one", Collection: sizeVariationCollection})
+	// orderItem := Admin.NewResource(&models.OrderItem{})
+	// orderItem.Meta(&admin.Meta{Name: "SizeVariation", Type: "select_one", Collection: sizeVariationCollection})
 
-	order := Admin.AddResource(&models.Order{}, &admin.Config{Menu: []string{"Order Management"}})
-	order.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
-	order.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
-	order.Meta(&admin.Meta{Name: "OrderItems", Resource: orderItem})
+	// order := Admin.AddResource(&models.Order{}, &admin.Config{Menu: []string{"Order Management"}})
+	// order.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
+	// order.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
+	// order.Meta(&admin.Meta{Name: "OrderItems", Resource: orderItem})
 
 	// define scopes for Order
 	// for _, state := range []string{"checkout", "cancelled", "paid", "paid_cancelled", "processing", "shipped", "returned"} {
@@ -79,40 +79,41 @@ func init() {
 	// 		},
 	// 	})
 	// }
-	order.IndexAttrs("-DiscountValue", "-OrderItems", "-AbandonedReason")
-	order.NewAttrs("-DiscountValue", "-AbandonedReason")
-	order.EditAttrs("-DiscountValue", "-AbandonedReason")
-	order.ShowAttrs("-DiscountValue", "-AbandonedReason")
+
+	// order.IndexAttrs("-DiscountValue", "-OrderItems", "-AbandonedReason")
+	// order.NewAttrs("-DiscountValue", "-AbandonedReason")
+	// order.EditAttrs("-DiscountValue", "-AbandonedReason")
+	// order.ShowAttrs("-DiscountValue", "-AbandonedReason")
 
 	// Define another resource for same model
-	abandonedOrder := Admin.AddResource(&models.Order{}, &admin.Config{Name: "Abandoned Order", Menu: []string{"Order Management"}})
-	abandonedOrder.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
-	abandonedOrder.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
+	// abandonedOrder := Admin.AddResource(&models.Order{}, &admin.Config{Name: "Abandoned Order", Menu: []string{"Order Management"}})
+	// abandonedOrder.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})
+	// abandonedOrder.Meta(&admin.Meta{Name: "BillingAddress", Type: "single_edit"})
 
 	// Define default scope for abandoned orders
-	abandonedOrder.Scope(&admin.Scope{
-		Default: true,
-		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("abandoned_reason IS NOT NULL AND abandoned_reason <> ?", "")
-		},
-	})
+	// abandonedOrder.Scope(&admin.Scope{
+	// 	Default: true,
+	// 	Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+	// 		return db.Where("abandoned_reason IS NOT NULL AND abandoned_reason <> ?", "")
+	// 	},
+	// })
 
 	// Define scopes for abandoned orders
-	for _, amount := range []int{5000, 10000, 20000} {
-		var amount = amount
-		abandonedOrder.Scope(&admin.Scope{
-			Name:  fmt.Sprint(amount),
-			Group: "Amount Greater Than",
-			Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-				return db.Where("payment_amount > ?", amount)
-			},
-		})
-	}
+	// for _, amount := range []int{5000, 10000, 20000} {
+	// 	var amount = amount
+	// 	abandonedOrder.Scope(&admin.Scope{
+	// 		Name:  fmt.Sprint(amount),
+	// 		Group: "Amount Greater Than",
+	// 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+	// 			return db.Where("payment_amount > ?", amount)
+	// 		},
+	// 	})
+	// }
 
-	abandonedOrder.IndexAttrs("-ShippingAddress", "-BillingAddress", "-DiscountValue", "-OrderItems")
-	abandonedOrder.NewAttrs("-DiscountValue")
-	abandonedOrder.EditAttrs("-DiscountValue")
-	abandonedOrder.ShowAttrs("-DiscountValue")
+	// abandonedOrder.IndexAttrs("-ShippingAddress", "-BillingAddress", "-DiscountValue", "-OrderItems")
+	// abandonedOrder.NewAttrs("-DiscountValue")
+	// abandonedOrder.EditAttrs("-DiscountValue")
+	// abandonedOrder.ShowAttrs("-DiscountValue")
 
 	// Add Store
 	store := Admin.AddResource(&models.Store{}, &admin.Config{Menu: []string{"Store Management"}})
@@ -134,7 +135,7 @@ func init() {
 	// newsletter.Meta(&admin.Meta{Name: "MailType", Type: "select_one", Collection: []string{"HTML", "Text"}})
 
 	// Add Setting
-	Admin.AddResource(&models.Setting{}, &admin.Config{Singleton: true})
+	// Admin.AddResource(&models.Setting{}, &admin.Config{Singleton: true})
 	// s := Admin.AddResource(&models.Setting{})
 	// s.IndexAttrs("ID")
 
@@ -142,23 +143,23 @@ func init() {
 	user := Admin.AddResource(&models.User{})
 	user.Meta(&admin.Meta{Name: "Gender", Type: "select_one", Collection: Genders})
 	user.Meta(&admin.Meta{Name: "Languages", Type: "select_many"})
-	user.IndexAttrs("ID", "Email", "Name", "Gender", "Role")
+	user.IndexAttrs("ID", "Name", "Gender", "Role")
 
 	// Add Banner
 	banner := Admin.AddResource(&models.BannerShow{})
 	banner.IndexAttrs("ID", "StoreID", "SesUuid")
 
 	// Add Publish
-	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
+	// Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
 	// Admin.AddMenu(&admin.Menu{Name: "Google", Link: "http://www.google.com", Ancestors: []string{"Outside", "Search Engine"}})
 
-	initFuncMap()
-	initRouter()
+	// initFuncMap()
+	// initRouter()
 }
 
-func sizeVariationCollection(resource interface{}, context *qor.Context) (results [][]string) {
-	for _, sizeVariation := range models.SizeVariations() {
-		results = append(results, []string{strconv.Itoa(int(sizeVariation.ID)), sizeVariation.Stringify()})
-	}
-	return
-}
+// func sizeVariationCollection(resource interface{}, context *qor.Context) (results [][]string) {
+// 	for _, sizeVariation := range models.SizeVariations() {
+// 		results = append(results, []string{strconv.Itoa(int(sizeVariation.ID)), sizeVariation.Stringify()})
+// 	}
+// 	return
+// }

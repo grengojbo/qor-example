@@ -30,12 +30,12 @@ var (
 	Seeds  = seeds.Seeds
 	Tables = []interface{}{
 		&models.User{}, &models.Address{},
-		&models.Category{}, &models.Color{}, &models.Size{},
-		&models.Product{}, &models.ColorVariation{}, &models.ColorVariationImage{}, &models.SizeVariation{},
+		// &models.Category{}, &models.Color{}, &models.Size{},
+		// &models.Product{}, &models.ColorVariation{}, &models.ColorVariationImage{}, &models.SizeVariation{},
 		&models.Store{},
-		&models.Order{}, &models.OrderItem{},
-		&models.Setting{},
-		&models.Newsletter{},
+		// &models.Order{}, &models.OrderItem{},
+		// &models.Setting{},
+		// &models.Newsletter{},
 
 		&admin.AssetManager{},
 		&publish.PublishEvent{},
@@ -50,30 +50,30 @@ func main() {
 func createRecords() {
 	fmt.Println("Start create sample data...")
 
-	createSetting()
-	fmt.Println("--> Created setting.")
+	// createSetting()
+	// fmt.Println("--> Created setting.")
 
 	createAdminUser()
-	createUsers()
-	fmt.Println("--> Created users.")
-	createAddresses()
-	fmt.Println("--> Created addresses.")
-	createNewsletters()
-	fmt.Println("--> Created newsletters.")
+	// createUsers()
+	// fmt.Println("--> Created users.")
+	// createAddresses()
+	// fmt.Println("--> Created addresses.")
+	// createNewsletters()
+	// fmt.Println("--> Created newsletters.")
 
-	createCategories()
-	fmt.Println("--> Created categories.")
-	createColors()
-	fmt.Println("--> Created colors.")
-	createSizes()
-	fmt.Println("--> Created sizes.")
-	createProducts()
-	fmt.Println("--> Created products.")
-	createStores()
-	fmt.Println("--> Created stores.")
+	// createCategories()
+	// fmt.Println("--> Created categories.")
+	// createColors()
+	// fmt.Println("--> Created colors.")
+	// createSizes()
+	// fmt.Println("--> Created sizes.")
+	// createProducts()
+	// fmt.Println("--> Created products.")
+	// createStores()
+	// fmt.Println("--> Created stores.")
 
-	createOrders()
-	fmt.Println("--> Created orders.")
+	// createOrders()
+	// fmt.Println("--> Created orders.")
 
 	fmt.Println("--> Done!")
 }
@@ -100,9 +100,12 @@ func createSetting() {
 
 func createAdminUser() {
 	user := models.User{}
-	user.Email = "admin@example.com"
+	// user.Email = "admin@example.com"
 	user.Name = "admin"
+	user.Password = "$2a$10$SXinmKBnwhRcB4EJLlTO2.OebRd0Tv8TzvFMLJ6XNiJeB0//SolS."
 	user.Gender = "Male"
+	user.FirstName = "Oleg"
+	user.LastName = "Dolya"
 	user.CreatedAt = time.Now()
 	user.Role = "admin"
 	if err := db.DB.Create(&user).Error; err != nil {
@@ -113,7 +116,7 @@ func createUsers() {
 	totalCount := 600
 	for i := 0; i < totalCount; i++ {
 		user := models.User{}
-		user.Email = fake.Email()
+		// user.Email = fake.Email()
 		user.Name = fake.Name()
 		user.Gender = []string{"Female", "Male"}[i%2]
 		if err := db.DB.Create(&user).Error; err != nil {
@@ -166,7 +169,8 @@ func createNewsletters() {
 		newsletter.Email = fake.Email()
 		if (index % (rand.Intn(9) + 1)) <= 4 {
 			newsletter.UserID = user.ID
-			newsletter.Email = user.Email
+			newsletter.Email = fake.Email()
+			// newsletter.Email = user.Email
 			subscribedAt := user.CreatedAt.Add(time.Duration(rand.Intn(24)) * time.Hour)
 			newsletter.SubscribedAt = &subscribedAt
 		}

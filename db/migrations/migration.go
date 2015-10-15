@@ -15,18 +15,18 @@ func init() {
 	log.Println("Start migration ...")
 	AutoMigrate(&admin.AssetManager{})
 
-	AutoMigrate(&models.Product{}, &models.ColorVariation{}, &models.ColorVariationImage{}, &models.SizeVariation{})
-	AutoMigrate(&models.Color{}, &models.Size{}, &models.Category{}, &models.Collection{})
+	// AutoMigrate(&models.Product{}, &models.ColorVariation{}, &models.ColorVariationImage{}, &models.SizeVariation{})
+	// AutoMigrate(&models.Color{}, &models.Size{}, &models.Category{}, &models.Collection{})
 
 	AutoMigrate(&models.Address{})
 
-	AutoMigrate(&models.Order{}, &models.OrderItem{})
+	// AutoMigrate(&models.Order{}, &models.OrderItem{})
 
 	AutoMigrate(&models.Store{})
 
 	// AutoMigrate(&models.Newsletter{})
 
-	AutoMigrate(&models.Setting{})
+	// AutoMigrate(&models.Setting{})
 
 	AutoMigrate(&models.User{})
 	log.Println("------------------------- BannerShow ---------------------------")

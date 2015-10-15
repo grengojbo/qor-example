@@ -7,7 +7,7 @@ import (
 
 type User struct {
 	gorm.Model
-	Email     string `sql:"type:varchar(75)" json:"email"`
+	// Email     string `sql:"type:varchar(75)" json:"email"`
 	Name      string `gorm:"column:username" sql:"type:varchar(30);unique_index" json:"username"`
 	Password  string `sql:"type:varchar(128)" json:"-"`
 	IsActive  bool   `gorm:"column:is_active"json:"active"`
@@ -16,8 +16,8 @@ type User struct {
 	Gender    string
 	Role      string
 	// Email     []Email
-	Phone     []Phone
-	Social    []Social
+	// Phone     []Phone
+	// Social    []Social
 	Languages []Language `gorm:"many2many:user_languages;"`
 	Addresses []Address
 	Comment   string
@@ -39,5 +39,5 @@ func (user User) DisplayName() string {
 }
 
 func (user User) AvailableLocales() []string {
-	return []string{"en-US", "zh-CN", "ru-RU"}
+	return []string{"en-US", "uk-UA", "ru-RU"}
 }

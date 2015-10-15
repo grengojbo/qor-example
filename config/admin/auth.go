@@ -72,7 +72,7 @@ func VerifyPassword(hashedPassword string, password string) error {
 // Return User
 func (this *Auth) GetUser() (bool, *models.User) {
 	var currentUser models.User
-	if !db.DB.Where("name = ?", this.User).First(&currentUser).RecordNotFound() {
+	if !db.DB.Where("username = ?", this.User).First(&currentUser).RecordNotFound() {
 		return true, &currentUser
 	}
 	return false, &currentUser
