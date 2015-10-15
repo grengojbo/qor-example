@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"runtime"
 	"time"
@@ -11,6 +12,8 @@ import (
 	"github.com/grengojbo/qor-example/config"
 	"github.com/grengojbo/qor-example/config/admin"
 	_ "github.com/grengojbo/qor-example/db/migrations"
+	"github.com/mssola/user_agent"
+	"github.com/nu7hatch/gouuid"
 )
 
 var (
@@ -56,6 +59,58 @@ func main() {
 	r.GET("/ping", func(c *gin.Context) {
 		c.String(200, "pong")
 	})
+
+	r.GET("/show/ping", func(c *gin.Context) {
+		// fmt.Printf("%v\n", c.Request)
+		fmt.Printf("User-Agent: %s\n", c.Request.UserAgent())
+		ua := user_agent.New(c.Request.UserAgent())
+		fmt.Printf("%v\n", ua.Mobile())  // => false
+		fmt.Printf("%v\n", ua.Bot())     // => false
+		fmt.Printf("%v\n", ua.Mozilla()) // => "5.0"
+
+		fmt.Printf("%v\n", ua.Platform()) // => "X11"
+		fmt.Printf("%v\n", ua.OS())       // => "Linux x86_64"
+
+		name, version := ua.Engine()
+		fmt.Printf("%v\n", name)    // => "AppleWebKit"
+		fmt.Printf("%v\n", version) // => "537.11"
+
+		name, version = ua.Browser()
+		fmt.Printf("Browser name:%v version: %v\n", name, version)
+		if len(c.Request.Referer()) > 1 {
+			fmt.Printf("Referrer: %s\n", c.Request.Referer())
+		}
+		// var ip string
+		ipv4 := false
+		ip, _, err := net.SplitHostPort(c.ClientIP())
+		if err != nil {
+			ip = "127.0.0.1"
+			// } else {
+			// 	ip = ipSrc.String()
+		}
+		// v := net.ParseIP(ip)
+		if net.ParseIP(ip).To4() != nil {
+			ipv4 = true
+		}
+		fmt.Printf("Remote IP: %s IPv4=%v\n", ip, ipv4)
+		fmt.Printf("Accept-Language: %s\n", c.Request.Header.Get("Accept-Language")[0:2])
+		u4, err := uuid.NewV4()
+		if err != nil {
+			fmt.Println("error:", err)
+			return
+		}
+		fmt.Println("uuid:", u4)
+		// w.Header().Set("cache-control", "priviate, max-age=0, no-cache")
+		c.Header("cache-control", "priviate, max-age=0, no-cache")
+		c.Header("pragma", "no-cache")
+		c.Header("expires", "-1")
+		c.Header("Last-Modified", fmt.Sprintf("%v", time.Now().UTC()))
+		// c.Header("Date", time.Now().UTC())
+		// INSERT INTO "banner_shows" ( "ses_uuid", "store_id", "user_ip", "user_mac", "created_at", "updated_at", "show_year", "show_month", "show_day", "show_hour", "show_minute", "user_agent", "accept_language" )
+		// VALUES ('df9e9ecf-b17c-4fe6-502e-aaddb55b961c', 8, '127.0.0.1:61526', '01:23:32:bb:63:12', NOW(), NOW(), Extract(YEAR from Now()), Extract(month from Now()), Extract(DAY from Now()), Extract(hour from Now()), Extract(minute from Now()), 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/45.0.2454.101 Safari/537.36', 'ru');
+		c.String(200, "pong")
+	})
+
 	r.GET("/login", func(c *gin.Context) {
 		// var cnt int
 		session := sessions.Default(c)

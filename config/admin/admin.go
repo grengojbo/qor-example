@@ -129,9 +129,9 @@ func init() {
 	Admin.AddResource(config.Config.I18n, &admin.Config{Menu: []string{"Site Management"}})
 
 	// Add Newsletter
-	newsletter := Admin.AddResource(&models.Newsletter{})
-	newsletter.Meta(&admin.Meta{Name: "NewsletterType", Type: "select_one", Collection: []string{"Weekly", "Monthly", "Promotions"}})
-	newsletter.Meta(&admin.Meta{Name: "MailType", Type: "select_one", Collection: []string{"HTML", "Text"}})
+	// newsletter := Admin.AddResource(&models.Newsletter{})
+	// newsletter.Meta(&admin.Meta{Name: "NewsletterType", Type: "select_one", Collection: []string{"Weekly", "Monthly", "Promotions"}})
+	// newsletter.Meta(&admin.Meta{Name: "MailType", Type: "select_one", Collection: []string{"HTML", "Text"}})
 
 	// Add Setting
 	Admin.AddResource(&models.Setting{}, &admin.Config{Singleton: true})
@@ -144,9 +144,13 @@ func init() {
 	user.Meta(&admin.Meta{Name: "Languages", Type: "select_many"})
 	user.IndexAttrs("ID", "Email", "Name", "Gender", "Role")
 
+	// Add Banner
+	banner := Admin.AddResource(&models.BannerShow{})
+	banner.IndexAttrs("ID", "StoreID", "SesUuid")
+
 	// Add Publish
 	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
-	Admin.AddMenu(&admin.Menu{Name: "Google", Link: "http://www.google.com", Ancestors: []string{"Outside", "Search Engine"}})
+	// Admin.AddMenu(&admin.Menu{Name: "Google", Link: "http://www.google.com", Ancestors: []string{"Outside", "Search Engine"}})
 
 	initFuncMap()
 	initRouter()

@@ -25,9 +25,9 @@ type User struct {
 	// Avatar    media_library.FileSystem
 }
 
-func (user User) TableName() string {
-	return "auth_user"
-}
+// func (user User) TableName() string {
+// 	return "auth_user"
+// }
 
 type Language struct {
 	gorm.Model

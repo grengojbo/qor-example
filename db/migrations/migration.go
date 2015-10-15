@@ -24,11 +24,13 @@ func init() {
 
 	AutoMigrate(&models.Store{})
 
-	AutoMigrate(&models.Newsletter{})
+	// AutoMigrate(&models.Newsletter{})
 
 	AutoMigrate(&models.Setting{})
 
 	AutoMigrate(&models.User{})
+	log.Println("------------------------- BannerShow ---------------------------")
+	AutoMigrate(&models.BannerShow{})
 }
 
 func AutoMigrate(values ...interface{}) {
