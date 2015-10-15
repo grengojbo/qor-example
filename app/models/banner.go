@@ -11,13 +11,15 @@ type BannerShow struct {
 	// BannerID         sql.NullInt64
 	StoreID          uint
 	SesUuid          string         `json:"-"`
+	IsBot            bool           `json:"-"`
 	UserMac          sql.NullString `sql:"size:100"`
 	UserIp           string         `sql:"size:15"`
-	UserAgent        string         `sql:"size:1000"`
-	AcceptLanguage   string         `sql:"size:255"`
-	Referrer         string
+	IPv4             bool           `gorm:"column:ipv4" json:"ip_v4"`
+	UserAgent        string         `sql:"type:char(2)"`
+	AcceptLanguage   string         `sql:"type:char(2)"`
+	Referrer         sql.NullString
 	UaBrowserFamily  sql.NullString `sql:"size:20"`
-	UaBrowserVersion sql.NullString `sql:"size:10"`
+	UaBrowserVersion sql.NullInt64  `json:"browser_version"`
 	UaOsFamily       sql.NullString `sql:"size:20"`
 	UaOsVersion      sql.NullString `sql:"size:10"`
 	UaDeviceFamily   sql.NullString `sql:"size:20"`
