@@ -12,8 +12,8 @@ Restart=always
 #Environment="USER=qor"
 #Environment="HOME=/home/qor"
 Environment="GIN_MODE=release"
-Environment="QORCONFIG=/home/qor/lib/src/github.com/qor/qor-example/database.yml"
-Environment="GOOPATH=/home/qor/lib"
+Environment="QORCONFIG=/home/qor/lib/src/github.com/qor/qor-example/config/database.yml"
+Environment="GOPATH=/home/qor/lib"
 
 [Install]
 WantedBy=multi-user.target
