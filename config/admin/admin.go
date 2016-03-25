@@ -256,6 +256,26 @@ func init() {
 	order.ShowAttrs("-DiscountValue", "-State")
 	order.SearchAttrs("User.Name", "User.Email", "ShippingAddress.ContactName", "ShippingAddress.Address1", "ShippingAddress.Address2")
 
+	balance := Admin.AddResource(&models.Balance{}, &admin.Config{Menu: []string{"Order Management"}})
+	balance.Meta(&admin.Meta{Name: "SubscribedAt", Type: "date"})
+	balance.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
+	balance.IndexAttrs("Product", "Count", "SubscribedAt", "User", "Store")
+	balance.NewAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Product"},
+				{"Count", "SubscribedAt"},
+			}},
+		&admin.Section{
+			Title: "Store",
+			Rows: [][]string{
+				{"User", "Store"},
+			}},
+		"Comment",
+	)
+	balance.EditAttrs(balance.NewAttrs())
+	balance.ShowAttrs(balance.NewAttrs())
+
 	// Add activity for order
 	activity.Register(order)
 
