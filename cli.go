@@ -22,7 +22,7 @@ var (
 	BuildTime = "2015-09-20 UTC"
 	GitHash   = "c00"
 	// Admin     *admin.Admin
-	Tables = []string{"Unit", "Role", "Languages", "Category"}
+	Tables = []string{"Unit", "Role", "Languages", "Category", "Setting"}
 )
 
 func ConfigRuntime() {
@@ -117,6 +117,8 @@ func runFeature(c *cli.Context) {
 			seeds.CreateUnits()
 		case table == "Role":
 			seeds.CreateRoles()
+		case table == "Setting":
+			seeds.CreateSetting()
 		}
 		fmt.Printf(" Ok\n")
 	}

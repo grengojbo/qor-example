@@ -44,7 +44,7 @@ func init() {
 	log.Println("model: Store Ok")
 	AutoMigrate(&models.Store{})
 
-	log.Println("model: Setting")
+	log.Println("model: Setting Ok")
 	AutoMigrate(&models.Setting{})
 
 	log.Println("model: Organization Ok")
