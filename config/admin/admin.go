@@ -259,6 +259,18 @@ func init() {
 	balance := Admin.AddResource(&models.Balance{}, &admin.Config{Menu: []string{"Order Management"}})
 	balance.Meta(&admin.Meta{Name: "SubscribedAt", Type: "date"})
 	balance.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
+	// https://github.com/qor/qor/blob/master/resource/resource.go#L39-L40
+	balance.SaveHandler = func(record interface{}, context *qor.Context) error {
+		b := record.(*models.Balance)
+		// b.Count += float32(2)
+		if b.UserID < 1 {
+			u := context.CurrentUser.(*models.User)
+			b.UserID = u.ID
+		}
+		context.GetDB().Save(&b)
+		return nil
+	}
+
 	balance.IndexAttrs("Product", "Count", "SubscribedAt", "User", "Store")
 	balance.NewAttrs(
 		&admin.Section{
@@ -273,7 +285,19 @@ func init() {
 			}},
 		"Comment",
 	)
-	balance.EditAttrs(balance.NewAttrs())
+	balance.EditAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Product"},
+				{"Count", "SubscribedAt"},
+			}},
+		&admin.Section{
+			Title: "Store",
+			Rows: [][]string{
+				{"User", "Store"},
+			}},
+		"Comment",
+	)
 	balance.ShowAttrs(balance.NewAttrs())
 
 	// Add activity for order
@@ -368,6 +392,11 @@ func init() {
 	)
 	user.EditAttrs(user.ShowAttrs())
 	user.NewAttrs(user.ShowAttrs())
+
+	// define actions for Order
+	type PassvordArgument struct {
+		Password string
+	}
 
 	// Add Newsletter
 	newsletter := Admin.AddResource(&models.Newsletter{})

@@ -34,6 +34,32 @@
   color: #666;
 }
 
+// Dashboard card
+.demo-card-event.mdl-card {
+  width: 356px;
+  height: 256px;
+}
+.demo-card-event > .mdl-card__title {
+  align-items: flex-start;
+}
+.demo-card-event > .mdl-card__title > h4 {
+  margin-top: 0;
+}
+.demo-card-event > .mdl-card__actions {
+  display: flex;
+  box-sizing:border-box;
+  align-items: center;
+}
+.demo-card-event > .mdl-card__actions > .material-icons {
+  padding-right: 10px;
+}
+.demo-card-event > .mdl-card__title,
+.demo-card-event > .mdl-card__actions,
+.demo-card-event > .mdl-card__actions > .mdl-button {
+  color: #000;
+}
+
+// Sidenav icon
 // /qor/admin/views/assets/stylesheets/scss/app/_qor-icons.scss
 [qor-icon-name*="Cars"] > a::before {
   content: "\e5c3";
