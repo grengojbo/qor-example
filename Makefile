@@ -162,14 +162,15 @@ seed:
 
 run:
 	@echo "...............................................................\n"
-	@echo Project: $(PROJECT_NAME)
+	@echo Project: $(PROJECT_NAME) Path: ${PROJECT_DIR}
 	@echo Open in browser:
 	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
-	@QORCONFIG=config/database.dev.yml go run main.go
+	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml go run main.go
 
 test:
-	@QORCONFIG=config/database.dev.yml go test -v  ./app/controllers/*_test.go
+	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml GIN_MODE=test go test -v  ./app/controllers/*_test.go
+	@#QORCONFIG=${PROJECT_DIR}/config/database.dev.yml go test -v ./...
 	@#API_PATH=$(PROJECT_DIR) ginkgo -v -r
 
 build: clean
