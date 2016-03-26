@@ -169,7 +169,7 @@ run:
 	@QORCONFIG=config/database.dev.yml go run main.go
 
 test:
-	@go test -v ./...
+	@QORCONFIG=config/database.dev.yml go test -v  ./app/controllers/*_test.go
 	@#API_PATH=$(PROJECT_DIR) ginkgo -v -r
 
 build: clean
