@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/grengojbo/gotools"
 	"github.com/jinzhu/gorm"
 	"github.com/qor/activity"
 	"github.com/qor/admin"
@@ -365,6 +366,7 @@ func init() {
 	user.IndexAttrs("ID", "Email", "Name", "LastName", "FirstName", "Gender", "Role", "IsActive")
 	user.SearchAttrs("Name", "LastName", "FirstName", "Email", "Organization.Name")
 	user.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
+	// user.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
 	// user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
 	user.Scope(&admin.Scope{Name: "active", Label: "Is Active", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
@@ -376,13 +378,13 @@ func init() {
 			return db.Where("is_active != true")
 		},
 	})
-	user.ShowAttrs(
+	user.NewAttrs("-Password")
+	user.EditAttrs(
 		&admin.Section{
 			Title: "Basic Information",
 			Rows: [][]string{
-				{"Name", "IsActive"},
+				{"Name", "Email", "IsActive"},
 				{"LastName", "FirstName"},
-				{"Email", "Password"},
 				{"Avatar"},
 				{"Gender", "Languages", "Role"},
 			}},
@@ -390,13 +392,49 @@ func init() {
 		"Addresses",
 		"Comment",
 	)
-	user.EditAttrs(user.ShowAttrs())
-	user.NewAttrs(user.ShowAttrs())
+	// user.ShowAttrs(user.EditAttrs())
 
-	// define actions for Order
-	type PassvordArgument struct {
-		Password string
+	// define actions for User
+	type PasswordArgument struct {
+		Password        string
+		PasswordConfirm string
 	}
+
+	user.Action(&admin.Action{
+		Name: "Change password",
+		Handle: func(argument *admin.ActionArgument) error {
+			var (
+				tx = argument.Context.GetDB().Begin()
+				el = argument.Argument.(*PasswordArgument)
+			)
+			p := config.Config.PasswordLength - 1
+			if el.Password != "" && el.PasswordConfirm != "" && len(el.Password) > p && el.Password == el.PasswordConfirm {
+				for _, record := range argument.FindSelectedRecords() {
+					u := record.(*models.User)
+					u.Password = gotools.PasswordBcrypt(el.Password)
+					if err := tx.Save(u).Error; err != nil {
+						tx.Rollback()
+						return err
+					}
+				}
+			} else {
+				// return validations.NewError(record, "Name", "Name can't be blank")
+				// return errors.New(fmt.Sprintf("Invalid password (min length %d)", config.Config.PasswordLength))
+				return errors.New("Invalid password (min length 6)")
+			}
+
+			tx.Commit()
+			return nil
+		},
+		// Visible: func(record interface{}, context *admin.Context) bool {
+		// 	if order, ok := record.(*models.Order); ok {
+		// 		return order.State == "processing"
+		// 	}
+		// 	return false
+		// },
+		Resource: Admin.NewResource(&PasswordArgument{}),
+		Modes:    []string{"show", "menu_item"},
+	})
 
 	// Add Newsletter
 	newsletter := Admin.AddResource(&models.Newsletter{})

@@ -62,7 +62,7 @@ install:
 	@go get -v -u github.com/kr/godep
 	@go get -v -u github.com/dgrijalva/jwt-go
 	@go get -v -u github.com/antonholmquist/jason
-	@go get -v -u go get github.com/go-resty/resty
+	@go get -v -u github.com/go-resty/resty
 	@go get -v -u github.com/gin-gonic/gin
 	@go get -v -u github.com/itsjamie/gin-cors
 	@go get -v -u github.com/gin-gonic/contrib/jwt

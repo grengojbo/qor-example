@@ -10,6 +10,7 @@ import (
 
 var Config = struct {
 	SiteName  string `default:"Qor DEMO"`
+	ApiUrl    string `default:"http://localhost:7000/api/"`
 	Token     string `default:"mysupersecretpassword"`
 	Migration bool   `default:"true"`
 	Env       string `env:"ENV" default:"local"`
@@ -37,10 +38,11 @@ var Config = struct {
 		Name    string `default:"sessionid"`
 		Adapter string `default:"cookie"`
 	}
-	I18n   *i18n.I18n
-	Locale string `default:"en-US"`
-	Secret string `default:"secret"`
-	Limit  int    `default:"5"`
+	I18n           *i18n.I18n
+	Locale         string `default:"en-US"`
+	Secret         string `default:"secret"`
+	Limit          int    `default:"5"`
+	PasswordLength int    `default:"6"`
 }{}
 
 var (
