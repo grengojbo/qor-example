@@ -1,8 +1,10 @@
 package controllers_test
 
 import (
-	"encoding/json"
+	// "encoding/json"
 	"testing"
+
+	"github.com/antonholmquist/jason"
 
 	"net/http"
 	"net/http/httptest"
@@ -31,8 +33,18 @@ func TestCategory(t *testing.T) {
 
 		Convey("Status Code Should Be 200", func() {
 			So(w.Code, ShouldEqual, 200)
-			_, err := json.Unmarshal(w.Body)
-			So(err, ShouldBeNil)
 		})
+
+		Convey("List Category", func() {
+			v, err := jason.NewObjectFromReader(w.Body)
+			So(err, ShouldBeNil)
+			vStatus, err := v.GetString("status")
+			So(err, ShouldBeNil)
+			So(vStatus, ShouldEqual, "success")
+			data, err := v.GetObjectArray("data")
+			So(err, ShouldBeNil)
+			So(data, ShouldHaveLength, 3)
+		})
+
 	})
 }
