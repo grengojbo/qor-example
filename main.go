@@ -11,7 +11,7 @@ import (
 	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin"
 	"github.com/qor/qor-example/config/routes"
-	_ "github.com/qor/qor-example/db/migrations"
+	"github.com/qor/qor-example/db/migrations"
 )
 
 var (
@@ -26,6 +26,10 @@ func main() {
 	fmt.Printf("Build Time: %s\n", BuildTime)
 	fmt.Printf("Git Commit Hash: %s\n", GitHash)
 	fmt.Printf("Listening on: %v\n", conf.Port)
+
+	if conf.Migration {
+		migrations.Run()
+	}
 
 	mux := http.NewServeMux()
 	// mux.Handle("/", routes.Router())

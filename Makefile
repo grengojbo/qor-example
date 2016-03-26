@@ -62,6 +62,7 @@ install:
 	@go get -v -u github.com/kr/godep
 	@go get -v -u github.com/dgrijalva/jwt-go
 	@go get -v -u github.com/antonholmquist/jason
+	@go get -v -u go get github.com/go-resty/resty
 	@go get -v -u github.com/gin-gonic/gin
 	@go get -v -u github.com/itsjamie/gin-cors
 	@go get -v -u github.com/gin-gonic/contrib/jwt
@@ -170,7 +171,8 @@ run:
 	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml go run main.go
 
 test:
-	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml GIN_MODE=release go test -v  ./app/controllers/*_test.go
+	@#QORCONFIG=${PROJECT_DIR}/config/database.dev.yml GIN_MODE=release go test -v  ./app/controllers/*_test.go
+	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml GIN_MODE=release go test -v  ./app/models/*_test.go
 	@#QORCONFIG=${PROJECT_DIR}/config/database.dev.yml go test -v ./...
 	@#API_PATH=$(PROJECT_DIR) ginkgo -v -r
 

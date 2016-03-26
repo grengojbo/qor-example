@@ -14,7 +14,8 @@ import (
 
 var Admin *admin.Admin
 
-func init() {
+// func init() {
+func Run() {
 	log.Println("Start migration ...")
 	AutoMigrate(&media_library.AssetManager{})
 
