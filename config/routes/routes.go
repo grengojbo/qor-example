@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"time"
 
+	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
@@ -54,6 +55,7 @@ func Router() *gin.Engine {
 	router.GET("/login", controllers.LoginForm)
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", controllers.Logout)
+	router.GET("/auth", controllers.LoginJWT)
 	// router.HandleFunc("/guitars/{id:[0-9]+}", h.guitarsShowHandler).Methods("GET")
 
 	// API version 1
@@ -61,14 +63,18 @@ func Router() *gin.Engine {
 	v1.GET("/category", controllers.CategoryIndex)
 	v1.GET("/products", controllers.ProductApiIndex)
 	v1.GET("/orders", controllers.OrderIndex)
-	// v1.GET("/users/:id", controllers.UserShow)
 	v1.POST("/auth", controllers.LoginApi)
 	v1.DELETE("/auth/:id", controllers.LogoutApi)
+
+	// API version 2 support JWT
+	v2 := router.Group("api/v2")
+	// https://github.com/appleboy/gin-jwt
+	v2.Use(jwt.Auth(config.Config.Token))
+	v2.GET("/users/:id", controllers.UserShow)
 
 	// router.GET("/", func(c *gin.Context) {
 	// 	c.Redirect(http.StatusMovedPermanently, "/admin")
 	// })
-
 
 	return router
 }

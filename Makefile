@@ -60,16 +60,19 @@ save:
 install:
 	@go get -v -u github.com/constabulary/gb/...
 	@go get -v -u github.com/kr/godep
+	@go get -v -u github.com/dgrijalva/jwt-go
 	@go get -v -u github.com/gin-gonic/gin
+	@go get -v -u github.com/itsjamie/gin-cors
+	@go get -v -u github.com/gin-gonic/contrib/jwt
 	@go get -v -u github.com/codegangsta/cli
 	@go get -v -u github.com/azumads/faker
 	@go get -v -u github.com/jteeuwen/go-bindata/...
-	@go get -v -u github.com/itsjamie/gin-cors
 	@go get -v -u github.com/apertoire/mlog
 	@go get -v -u github.com/microcosm-cc/bluemonday
 	@go get -v -u github.com/jinzhu/gorm/dialects/mysql
 	@go get -v -u github.com/jinzhu/gorm/dialects/postgres
 	@go get -v -u github.com/jinzhu/gorm/dialects/sqlite
+	@go get -v -u github.com/smartystreets/goconvey/convey
 	@#go get -v -u
 
 qor:
@@ -125,22 +128,24 @@ assets:
 	@cp -R ../publish/views/themes/publish/assets ./public/admin/
 
 release: clean template assets
+	@mkdir -p ./dist/bin
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
 	@echo "building release ${BIN_NAME} ${VERSION}"
 	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME) main.go
 	@echo "building release ${BIN_NAME_CLI} ${VERSION}"
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME_CLI) cli.go
-	@chmod 0755 ./dist/$(BIN_NAME_CLI)
+	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cli.go
+	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
 arm: clean template assets
+	@mkdir -p ./dist/bin
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
 	@echo "building release ${BIN_NAME} ${VERSION}"
 	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./qor-server main.go
 	@echo "building release ${BIN_NAME_CLI} ${VERSION}"
-	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./$(BIN_NAME_CLI) cli.go
-	@chmod 0755 ./$(BIN_NAME_CLI)
+	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cli.go
+	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
 clean:
 	@test ! -e ./${BIN_NAME} || rm ./${BIN_NAME}

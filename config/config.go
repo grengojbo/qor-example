@@ -10,6 +10,7 @@ import (
 
 var Config = struct {
 	SiteName string `default:"Qor DEMO"`
+	Token    string `default:"mysupersecretpassword"`
 	Env      string `env:"ENV" default:"local"`
 	Port     uint   `default:"7000" env:"PORT"`
 	DB       struct {

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"time"
 
+	jwt_lib "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/grengojbo/gotools"
@@ -142,15 +143,29 @@ func LoginApi(ctx *gin.Context) {
 	}
 }
 
+func LoginJWT(ctx *gin.Context) {
+	// Create the token
+	token := jwt_lib.New(jwt_lib.GetSigningMethod("HS256"))
+	// Set some claims
+	token.Claims["ID"] = "Christopher"
+	token.Claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	// Sign and get the complete encoded token as a string
+	tokenString, err := token.SignedString([]byte(config.Config.Token))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Could not generate token"})
+	}
+	ctx.JSON(http.StatusOK, gin.H{"token": tokenString})
+}
+
 func Logout(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Clear()
 	session.Delete("_auth_user_id")
 	if err := session.Save(); err != nil {
-		log.Panicln(err)
+		log.Println("[ERROR]", err)
 	}
 	log.Println("[LOGOUT]")
-	log.Println(session)
+	// log.Println(session)
 	ctx.Redirect(http.StatusMovedPermanently, "/login")
 }
 
