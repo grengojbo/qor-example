@@ -51,6 +51,7 @@ func Router() *gin.Engine {
 	router.GET("/", controllers.HomeIndex)
 	router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
+	router.GET("/login", controllers.LoginForm)
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", controllers.Logout)
 	// router.HandleFunc("/guitars/{id:[0-9]+}", h.guitarsShowHandler).Methods("GET")
@@ -68,16 +69,6 @@ func Router() *gin.Engine {
 	// 	c.Redirect(http.StatusMovedPermanently, "/admin")
 	// })
 
-	router.GET("/login", func(c *gin.Context) {
-		session := sessions.Default(c)
-		session.Set("lastLogin", time.Now().Unix())
-		session.Set("ip", c.ClientIP())
-		session.Save()
-		c.HTML(200, "login.tmpl", gin.H{
-			"title":     conf.SiteName,
-			"timestamp": time.Now().Unix(),
-		})
-	})
 
 	return router
 }

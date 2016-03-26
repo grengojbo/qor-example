@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
@@ -9,13 +10,30 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/grengojbo/gotools"
 	"github.com/qor/qor-example/app/models"
+	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin"
 	"github.com/qor/qor-example/db"
 )
 
+//GET Login
+func LoginForm(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	session.Set("lastLogin", time.Now().Unix())
+	session.Delete("_auth_user_id")
+	session.Set("ip", ctx.ClientIP())
+	session.Save()
+	ctx.HTML(200, "login.tmpl", gin.H{
+		"title":     config.Config.SiteName,
+		"timestamp": time.Now().Unix(),
+	})
+}
+
+// POST Login
 func Login(ctx *gin.Context) {
 	var login admin.Auth
 	session := sessions.Default(ctx)
+	session.Delete("_auth_user_id")
+	session.Save()
 	if ctx.BindJSON(&login) == nil {
 		if ok, user := login.GetUser(); ok != false {
 			if err := gotools.VerifyPassword(user.Password, login.Password); err != nil {
@@ -127,7 +145,12 @@ func LoginApi(ctx *gin.Context) {
 func Logout(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Clear()
-	session.Save()
+	session.Delete("_auth_user_id")
+	if err := session.Save(); err != nil {
+		log.Panicln(err)
+	}
+	log.Println("[LOGOUT]")
+	log.Println(session)
 	ctx.Redirect(http.StatusMovedPermanently, "/login")
 }
 
