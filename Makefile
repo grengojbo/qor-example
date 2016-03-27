@@ -136,9 +136,9 @@ release: clean template assets
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
 	@echo "building release ${BIN_NAME} ${VERSION}"
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME) main.go
+	@GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME) main.go
 	@echo "building release ${BIN_NAME_CLI} ${VERSION}"
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cli.go
+	@GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cmd/cli.go
 	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
 arm: clean template assets
@@ -146,9 +146,10 @@ arm: clean template assets
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
 	@echo "building release ${BIN_NAME} ${VERSION}"
-	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./qor-server main.go
+	@#CGO_ENABLED=0
+	@GOOS=linux GOARCH=arm GOARM=7 go build -a -tags 'icu libsqlite3 linux netgo' -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./qor-server main.go
 	@echo "building release ${BIN_NAME_CLI} ${VERSION}"
-	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cli.go
+	@GOOS=linux GOARCH=arm GOARM=7 go build -a -tags 'icu libsqlite3 linux netgo' -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cmd/cli.go
 	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
 clean:
@@ -170,11 +171,16 @@ run:
 	@echo Open in browser:
 	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
+	@#mv app/views/index.html app/views/home_index.tmpl
+	@#mv app/views/login.html app/views/login_kassa.tmpl
+	@#mv app/views/kassa.html app/views/kassa.tmpl
+	@#mv app/views/menu.html app/views/menu.tmpl
+	@#mv app/views/test.html app/views/test.tmpl
 	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go run main.go
 
 test:
-	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v  ./app/controllers/*_test.go
-	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v  ./app/models/*_test.go
+	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v ./app/controllers/*_test.go
+	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v ./app/models/*_test.go
 	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go test -v ./...
 	@#API_PATH=$(PROJECT_DIR) ginkgo -v -r
 

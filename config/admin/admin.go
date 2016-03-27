@@ -89,7 +89,7 @@ func init() {
 		}})
 	}
 
-	product.IndexAttrs("-ColorVariations", "-NameSmall")
+	product.IndexAttrs("-ColorVariations", "-NameSmall", "-Description")
 
 	product.Action(&admin.Action{
 		Name: "View On Site",
@@ -136,14 +136,14 @@ func init() {
 		Modes: []string{"index", "edit", "menu_item"},
 	})
 
-	product.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "Product status",
+	product.Scope(&admin.Scope{Name: "pactive", Label: "Enable", Group: "Product status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("enabled = true")
+			return db.Where(models.Product{Enabled: true})
 		},
 	})
-	product.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "Product status",
+	product.Scope(&admin.Scope{Name: "pnoactive", Label: "Disable", Group: "Product status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("enabled != true OR enabled IS NULL")
+			return db.Not(models.Product{Enabled: true})
 		},
 	})
 
@@ -380,12 +380,12 @@ func init() {
 	user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
 	user.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("enabled = true")
+			return db.Where(models.User{Enabled: true})
 		},
 	})
 	user.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("enabled != true OR enabled IS NULL")
+			return db.Not(models.User{Enabled: true})
 		},
 	})
 	user.NewAttrs("-Password", "-PasswordConfirm")
