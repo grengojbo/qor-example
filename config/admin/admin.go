@@ -72,7 +72,7 @@ func init() {
 				{"Name"},
 				{"NameSmall"},
 				{"Code", "Price"},
-				{"Unit", "Disabled"},
+				{"Unit", "Enabled"},
 			}},
 		&admin.Section{
 			Title: "Organization",
@@ -363,22 +363,22 @@ func init() {
 	user := Admin.AddResource(&models.User{})
 	user.Meta(&admin.Meta{Name: "Gender", Type: "select_one", Collection: []string{"Male", "Female", "Unknown"}})
 
-	user.IndexAttrs("ID", "Email", "Name", "LastName", "FirstName", "Gender", "Role", "IsActive")
+	user.IndexAttrs("ID", "Email", "Name", "LastName", "FirstName", "Gender", "Role", "Enabled")
 	user.SearchAttrs("Name", "LastName", "FirstName", "Email", "Organization.Name")
 	user.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
-	// user.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
-	// user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
-	user.Scope(&admin.Scope{Name: "active", Label: "Is Active", Group: "User Status",
+	user.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
+	user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
+	user.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where(models.User{IsActive: true})
+			return db.Where("enabled = true")
 		},
 	})
-	user.Scope(&admin.Scope{Name: "noactive", Label: "Is not Active", Group: "User Status",
+	user.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("is_active != true")
+			return db.Where("enabled != true OR enabled IS NULL")
 		},
 	})
-	user.NewAttrs("-Password")
+	user.NewAttrs("-Password", "-PasswordConfirm")
 	user.EditAttrs(
 		&admin.Section{
 			Title: "Basic Information",
@@ -394,36 +394,82 @@ func init() {
 	)
 	// user.ShowAttrs(user.EditAttrs())
 
+	user.Action(&admin.Action{
+		Name: "Disable",
+		Handle: func(arg *admin.ActionArgument) error {
+			for _, record := range arg.FindSelectedRecords() {
+				arg.Context.DB.Model(record.(*models.User)).Update("enabled", false)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *admin.Context) bool {
+			if u, ok := record.(*models.User); ok {
+				return u.Enabled == true
+			}
+			return true
+		},
+		Modes: []string{"index", "edit", "menu_item"},
+	})
+
+	user.Action(&admin.Action{
+		Name: "Enable",
+		Handle: func(arg *admin.ActionArgument) error {
+			for _, record := range arg.FindSelectedRecords() {
+				arg.Context.DB.Model(record.(*models.User)).Update("enabled", true)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *admin.Context) bool {
+			if u, ok := record.(*models.User); ok {
+				return u.Enabled == false
+			}
+			return true
+		},
+		Modes: []string{"index", "edit", "menu_item"},
+	})
 	// define actions for User
 	type PasswordArgument struct {
 		Password        string
 		PasswordConfirm string
 	}
 
+	passwd := Admin.NewResource(&PasswordArgument{})
+	passwd.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
+	passwd.AddValidator(func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
+		if meta := metaValues.Get("Password"); meta != nil {
+			if name := utils.ToString(meta.Value); strings.TrimSpace(name) == "" {
+				return validations.NewError(record, "Password", "Password can't be blank")
+			}
+		}
+		return nil
+	})
+
 	user.Action(&admin.Action{
 		Name: "Change password",
 		Handle: func(argument *admin.ActionArgument) error {
 			var (
-				tx = argument.Context.GetDB().Begin()
+				// tx = argument.Context.GetDB().Begin()
 				el = argument.Argument.(*PasswordArgument)
 			)
-			p := config.Config.PasswordLength - 1
-			if el.Password != "" && el.PasswordConfirm != "" && len(el.Password) > p && el.Password == el.PasswordConfirm {
-				for _, record := range argument.FindSelectedRecords() {
-					u := record.(*models.User)
-					u.Password = gotools.PasswordBcrypt(el.Password)
-					if err := tx.Save(u).Error; err != nil {
-						tx.Rollback()
-						return err
-					}
+			// p := config.Config.PasswordLength - 1
+			// if el.Password != "" && el.PasswordConfirm != "" && len(el.Password) > p && el.Password == el.PasswordConfirm {
+			// if el.PasswordConfirm != "" {
+			for _, record := range argument.FindSelectedRecords() {
+				u := record.(*models.User)
+				u.Password = gotools.PasswordBcrypt(el.Password)
+				// if err := tx.Save(u).Error; err != nil {
+				if err := argument.Context.GetDB().Save(u).Error; err != nil {
+					// tx.Rollback()
+					return err
 				}
-			} else {
-				// return validations.NewError(record, "Name", "Name can't be blank")
-				// return errors.New(fmt.Sprintf("Invalid password (min length %d)", config.Config.PasswordLength))
-				return errors.New("Invalid password (min length 6)")
 			}
+			// } else {
+			// return errors.New(fmt.Sprintf("Invalid password (min length %d)", config.Config.PasswordLength))
+			// return errors.New("Invalid password (min length 6)")
+			// return validations.NewError(el, "Password", "Password can't be blank")
+			// }
 
-			tx.Commit()
+			// tx.Commit()
 			return nil
 		},
 		// Visible: func(record interface{}, context *admin.Context) bool {
@@ -432,7 +478,7 @@ func init() {
 		// 	}
 		// 	return false
 		// },
-		Resource: Admin.NewResource(&PasswordArgument{}),
+		Resource: passwd,
 		Modes:    []string{"show", "menu_item"},
 	})
 

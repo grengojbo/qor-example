@@ -1,4 +1,6 @@
 MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin
+DB_NAME=database.dev.yml
+
 OSNAME=$(shell uname)
 
 GO=$(shell which go)
@@ -168,12 +170,12 @@ run:
 	@echo Open in browser:
 	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
-	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml go run main.go
+	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go run main.go
 
 test:
-	@#QORCONFIG=${PROJECT_DIR}/config/database.dev.yml GIN_MODE=release go test -v  ./app/controllers/*_test.go
-	@QORCONFIG=${PROJECT_DIR}/config/database.dev.yml GIN_MODE=release go test -v  ./app/models/*_test.go
-	@#QORCONFIG=${PROJECT_DIR}/config/database.dev.yml go test -v ./...
+	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v  ./app/controllers/*_test.go
+	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v  ./app/models/*_test.go
+	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go test -v ./...
 	@#API_PATH=$(PROJECT_DIR) ginkgo -v -r
 
 build: clean
@@ -187,7 +189,7 @@ cli: clean
 	@echo "Building cli ${VERSION}"
 	@go build -a -tags netgo -ldflags '-w -X cmd.BuildTime=${CUR_TIME} -X cmd.Version=${VERSION} -X cmd.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cli.go
 	@echo "PROG=$(BIN_NAME_CLI) source ./scripts/bash_autocomplete"
-	@echo "export QORCONFIG=config/database.dev.yml"
+	@echo "export QORCONFIG=config/${DB_NAME}"
 	@echo "export DEBUG=false"
 	@echo "RUN: ./$(BIN_NAME_CLI)"
 
