@@ -1,9 +1,10 @@
-package cmd
+// +build ignore
+
+package main
 
 import (
 	"fmt"
 	"os"
-	"runtime"
 
 	// "github.com/nu7hatch/gouuid"
 	"github.com/codegangsta/cli"
@@ -24,12 +25,6 @@ var (
 	// Admin     *admin.Admin
 	Tables = []string{"Unit", "Role", "Languages", "Category", "Setting"}
 )
-
-func ConfigRuntime() {
-	nuCPU := runtime.NumCPU()
-	runtime.GOMAXPROCS(nuCPU)
-	// fmt.Printf("Running with %d CPUs\n", nuCPU)
-}
 
 var Commands = []cli.Command{
 	cmdFeature,
@@ -167,6 +162,8 @@ func runMigrate(c *cli.Context) {
 	fmt.Printf("Category, ")
 	AutoMigrate(&models.Category{})
 
+	fmt.Printf("Rfid, ")
+	AutoMigrate(&models.Rfid{})
 	fmt.Printf("Organization, ")
 	AutoMigrate(&models.Organization{})
 	fmt.Printf("User, ")
@@ -176,19 +173,23 @@ func runMigrate(c *cli.Context) {
 
 	fmt.Printf("Store, ")
 	AutoMigrate(&models.Store{})
+
+	fmt.Printf("Product, ")
+	AutoMigrate(&models.Product{})
+
 	// fmt.Printf("Car, ")
 	// AutoMigrate(&models.Car{})
 
-	// fmt.Printf("CashDevice, ")
-	// AutoMigrate(&models.CashDevice{})
-
-	// fmt.Printf("Voucher, ")
-	// AutoMigrate(&models.Voucher{})
-	// fmt.Printf("VoucherItem, ")
-	// AutoMigrate(&models.VoucherItem{})
+	fmt.Printf("CashDevice, ")
+	AutoMigrate(&models.CashDevice{})
 
 	// fmt.Printf("ThermalPrinterDevice, ")
 	// AutoMigrate(&models.ThermalPrinterDevice{})
+
+	fmt.Printf("Voucher, ")
+	AutoMigrate(&models.Voucher{})
+	fmt.Printf("VoucherItem, ")
+	AutoMigrate(&models.VoucherItem{})
 
 	fmt.Printf("Balance, ")
 	AutoMigrate(&models.Balance{})

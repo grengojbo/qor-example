@@ -136,6 +136,17 @@ func init() {
 		Modes: []string{"index", "edit", "menu_item"},
 	})
 
+	product.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "Product status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Where("enabled = true")
+		},
+	})
+	product.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "Product status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Where("enabled != true OR enabled IS NULL")
+		},
+	})
+
 	Admin.AddResource(&models.Color{}, &admin.Config{Menu: []string{"Product Management"}})
 	Admin.AddResource(&models.Size{}, &admin.Config{Menu: []string{"Product Management"}})
 	Admin.AddResource(&models.Category{}, &admin.Config{Menu: []string{"Product Management"}})
