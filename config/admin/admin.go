@@ -71,8 +71,7 @@ func init() {
 			Rows: [][]string{
 				{"Name"},
 				{"NameSmall"},
-				{"Code", "Price"},
-				{"Unit", "Enabled"},
+				{"Code", "Price", "Unit"},
 			}},
 		&admin.Section{
 			Title: "Organization",
@@ -383,7 +382,7 @@ func init() {
 		&admin.Section{
 			Title: "Basic Information",
 			Rows: [][]string{
-				{"Name", "Email", "IsActive"},
+				{"Name", "Email"},
 				{"LastName", "FirstName"},
 				{"Avatar"},
 				{"Gender", "Languages", "Role"},
@@ -448,36 +447,21 @@ func init() {
 		Name: "Change password",
 		Handle: func(argument *admin.ActionArgument) error {
 			var (
-				// tx = argument.Context.GetDB().Begin()
 				el = argument.Argument.(*PasswordArgument)
 			)
-			// p := config.Config.PasswordLength - 1
 			// if el.Password != "" && el.PasswordConfirm != "" && len(el.Password) > p && el.Password == el.PasswordConfirm {
-			// if el.PasswordConfirm != "" {
 			for _, record := range argument.FindSelectedRecords() {
 				u := record.(*models.User)
 				u.Password = gotools.PasswordBcrypt(el.Password)
-				// if err := tx.Save(u).Error; err != nil {
 				if err := argument.Context.GetDB().Save(u).Error; err != nil {
-					// tx.Rollback()
 					return err
 				}
 			}
 			// } else {
 			// return errors.New(fmt.Sprintf("Invalid password (min length %d)", config.Config.PasswordLength))
-			// return errors.New("Invalid password (min length 6)")
-			// return validations.NewError(el, "Password", "Password can't be blank")
 			// }
-
-			// tx.Commit()
 			return nil
 		},
-		// Visible: func(record interface{}, context *admin.Context) bool {
-		// 	if order, ok := record.(*models.Order); ok {
-		// 		return order.State == "processing"
-		// 	}
-		// 	return false
-		// },
 		Resource: passwd,
 		Modes:    []string{"show", "menu_item"},
 	})
