@@ -1,4 +1,6 @@
 MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin
+DB_NAME=database.dev.yml
+
 OSNAME=$(shell uname)
 
 GO=$(shell which go)
@@ -60,16 +62,21 @@ save:
 install:
 	@go get -v -u github.com/constabulary/gb/...
 	@go get -v -u github.com/kr/godep
+	@go get -v -u github.com/dgrijalva/jwt-go
+	@go get -v -u github.com/antonholmquist/jason
+	@go get -v -u github.com/go-resty/resty
 	@go get -v -u github.com/gin-gonic/gin
+	@go get -v -u github.com/itsjamie/gin-cors
+	@go get -v -u github.com/gin-gonic/contrib/jwt
 	@go get -v -u github.com/codegangsta/cli
 	@go get -v -u github.com/azumads/faker
 	@go get -v -u github.com/jteeuwen/go-bindata/...
-	@go get -v -u github.com/itsjamie/gin-cors
 	@go get -v -u github.com/apertoire/mlog
 	@go get -v -u github.com/microcosm-cc/bluemonday
 	@go get -v -u github.com/jinzhu/gorm/dialects/mysql
 	@go get -v -u github.com/jinzhu/gorm/dialects/postgres
 	@go get -v -u github.com/jinzhu/gorm/dialects/sqlite
+	@go get -v -u github.com/smartystreets/goconvey/convey
 	@#go get -v -u
 
 qor:
@@ -125,22 +132,25 @@ assets:
 	@cp -R ../publish/views/themes/publish/assets ./public/admin/
 
 release: clean template assets
+	@mkdir -p ./dist/bin
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
 	@echo "building release ${BIN_NAME} ${VERSION}"
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME) main.go
+	@GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME) main.go
 	@echo "building release ${BIN_NAME_CLI} ${VERSION}"
-	@CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/$(BIN_NAME_CLI) cli.go
-	@chmod 0755 ./dist/$(BIN_NAME_CLI)
+	@GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cmd/cli.go
+	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
 arm: clean template assets
+	@mkdir -p ./dist/bin
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
 	@echo "building release ${BIN_NAME} ${VERSION}"
-	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./qor-server main.go
+	@#CGO_ENABLED=0
+	@GOOS=linux GOARCH=arm GOARM=7 go build -a -tags 'icu libsqlite3 linux netgo' -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./qor-server main.go
 	@echo "building release ${BIN_NAME_CLI} ${VERSION}"
-	@go build -a -tags "icu libsqlite3 linux netgo" -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./$(BIN_NAME_CLI) cli.go
-	@chmod 0755 ./$(BIN_NAME_CLI)
+	@GOOS=linux GOARCH=arm GOARM=7 go build -a -tags 'icu libsqlite3 linux netgo' -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cmd/cli.go
+	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
 clean:
 	@test ! -e ./${BIN_NAME} || rm ./${BIN_NAME}
@@ -157,28 +167,37 @@ seed:
 
 run:
 	@echo "...............................................................\n"
-	@echo Project: $(PROJECT_NAME)
+	@echo Project: $(PROJECT_NAME) Path: ${PROJECT_DIR}
 	@echo Open in browser:
 	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
-	@QORCONFIG=config/database.dev.yml go run main.go
+	@#mv app/views/index.html app/views/home_index.tmpl
+	@#mv app/views/login.html app/views/login_kassa.tmpl
+	@#mv app/views/kassa.html app/views/kassa.tmpl
+	@#mv app/views/menu.html app/views/menu.tmpl
+	@#mv app/views/test.html app/views/test.tmpl
+	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go run main.go
 
 test:
-	@go test -v ./...
+	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v ./app/controllers/*_test.go
+	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} GIN_MODE=release go test -v ./app/models/*_test.go
+	@#QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go test -v ./...
 	@#API_PATH=$(PROJECT_DIR) ginkgo -v -r
 
 build: clean
 	@echo "Building ${BIN_NAME} ${VERSION}"
 	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o $(BIN_NAME) main.go
 	@echo "Building ${BIN_NAME_CLI} ${VERSION}"
-	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cli.go
+	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X cmd.BuildTime=${CUR_TIME} -X cmd.Version=${VERSION} -X cmd.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cmd/cli.go
+	@chmod 0755 ./$(BIN_NAME_CLI)
 
 
 cli: clean
 	@echo "Building cli ${VERSION}"
-	@go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cli.go
+	@go build -a -tags netgo -ldflags '-w -X cmd.BuildTime=${CUR_TIME} -X cmd.Version=${VERSION} -X cmd.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cmd/cli.go
+	@chmod 0755 ./$(BIN_NAME_CLI)
 	@echo "PROG=$(BIN_NAME_CLI) source ./scripts/bash_autocomplete"
-	@echo "export QORCONFIG=config/database.dev.yml"
+	@echo "export QORCONFIG=config/${DB_NAME}"
 	@echo "export DEBUG=false"
 	@echo "RUN: ./$(BIN_NAME_CLI)"
 

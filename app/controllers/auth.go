@@ -2,20 +2,39 @@ package controllers
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
+	jwt_lib "github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/grengojbo/gotools"
 	"github.com/qor/qor-example/app/models"
+	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin"
 	"github.com/qor/qor-example/db"
 )
 
+//GET Login
+func LoginForm(ctx *gin.Context) {
+	session := sessions.Default(ctx)
+	session.Set("lastLogin", time.Now().Unix())
+	session.Delete("_auth_user_id")
+	session.Set("ip", ctx.ClientIP())
+	session.Save()
+	ctx.HTML(200, "login.tmpl", gin.H{
+		"title":     config.Config.SiteName,
+		"timestamp": time.Now().Unix(),
+	})
+}
+
+// POST Login
 func Login(ctx *gin.Context) {
 	var login admin.Auth
 	session := sessions.Default(ctx)
+	session.Delete("_auth_user_id")
+	session.Save()
 	if ctx.BindJSON(&login) == nil {
 		if ok, user := login.GetUser(); ok != false {
 			if err := gotools.VerifyPassword(user.Password, login.Password); err != nil {
@@ -124,10 +143,29 @@ func LoginApi(ctx *gin.Context) {
 	}
 }
 
+func LoginJWT(ctx *gin.Context) {
+	// Create the token
+	token := jwt_lib.New(jwt_lib.GetSigningMethod("HS256"))
+	// Set some claims
+	token.Claims["ID"] = "Christopher"
+	token.Claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	// Sign and get the complete encoded token as a string
+	tokenString, err := token.SignedString([]byte(config.Config.Token))
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Could not generate token"})
+	}
+	ctx.JSON(http.StatusOK, gin.H{"token": tokenString})
+}
+
 func Logout(ctx *gin.Context) {
 	session := sessions.Default(ctx)
 	session.Clear()
-	session.Save()
+	session.Delete("_auth_user_id")
+	if err := session.Save(); err != nil {
+		log.Println("[ERROR]", err)
+	}
+	log.Println("[LOGOUT]")
+	// log.Println(session)
 	ctx.Redirect(http.StatusMovedPermanently, "/login")
 }
 

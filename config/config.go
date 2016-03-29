@@ -9,10 +9,13 @@ import (
 )
 
 var Config = struct {
-	SiteName string `default:"Qor DEMO"`
-	Env      string `env:"ENV" default:"local"`
-	Port     uint   `default:"7000" env:"PORT"`
-	DB       struct {
+	SiteName  string `default:"Qor DEMO"`
+	ApiUrl    string `default:"http://localhost:7000/api/"`
+	Token     string `default:"mysupersecretpassword"`
+	Migration bool   `default:"true"`
+	Env       string `env:"ENV" default:"local"`
+	Port      uint   `default:"7000" env:"PORT"`
+	DB        struct {
 		Name     string `default:"qor_example"`
 		Adapter  string `default:"mysql"`
 		User     string
@@ -35,15 +38,16 @@ var Config = struct {
 		Name    string `default:"sessionid"`
 		Adapter string `default:"cookie"`
 	}
-	I18n   *i18n.I18n
-	Locale string `default:"en-US"`
-	Secret string `default:"secret"`
-	Limit  int    `default:"5"`
+	I18n           *i18n.I18n
+	Locale         string `default:"en-US"`
+	Secret         string `default:"secret"`
+	Limit          int    `default:"5"`
+	PasswordLength int    `default:"6"`
 }{}
 
 var (
 	Root       = os.Getenv("GOPATH") + "/src/github.com/qor/qor-example"
-	FileConfig = "config/database.yml"
+	FileConfig = os.Getenv("GOPATH") + "/config/database.yml"
 )
 
 // Set environment variable config path -> export QORCONFIG=/etc/qor/production.yml

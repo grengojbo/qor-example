@@ -1,9 +1,43 @@
 <div class="qor-page__body">
+
+  <div class="qor-page__header has-search">
+    <form class="qor-search-container" method="GET">
+
+
+    <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable qor-search is-upgraded" data-upgraded=",MaterialTextfield">
+      <label class="mdl-button mdl-js-button mdl-button--icon qor-search__label" for="inputSearch" data-upgraded=",MaterialButton">
+        <i class="material-icons">search</i>
+      </label>
+      <div class="mdl-textfield__expandable-holder">
+        <input class="mdl-textfield__input qor-search__input" type="text" id="inputSearch" name="keyword" value="" placeholder="Search">
+        <label class="mdl-textfield__label"></label>
+      </div>
+      <button class="mdl-button mdl-js-button mdl-button--icon mdl-button--colored qor-search__clear" type="button" data-upgraded=",MaterialButton">
+        <i class="material-icons md-18">clear</i>
+      </button>
+    </div>
+  </form>
+  </div>
+
   <div class="qor-section introduction">
-    <h5>This is the DEMO app for Qor</h5>
-    Github: <a href="http://github.com/qor/qor" target="_blank">github.com/qor/qor</a><br/>
-    WebSite: <a href="http://getqor.com" target="_blank">getqor.com</a><br/>
-    Source code of this demo: <a href="http://github.com/qor/qor-example" target="_blank">github.com/qor/qor-example</a><br/>
+    <div class="demo-card-event mdl-card mdl-shadow--2dp">
+      <div class="mdl-card__title mdl-card--expand">
+        <h4>This is the DEMO app for Qor</h4>
+      </div>
+      <div class="mdl-card__supporting-text">
+        Github: <a href="http://github.com/qor/qor" target="_blank">github.com/qor/qor</a><br/>
+        WebSite: <a href="http://getqor.com" target="_blank">getqor.com</a><br/>
+        Source code of this demo: <a href="http://github.com/qor/qor-example" target="_blank">github.com/qor/qor-example</a><br/>
+      </div>
+      <div class="mdl-card__actions mdl-card--border">
+        <a class="mdl-button mdl-button--colored mdl-js-button mdl-js-ripple-effect">
+          Action
+        </a>
+        <div class="mdl-layout-spacer"></div>
+        <i class="material-icons">event</i>
+      </div>
+    </div>
+
   </div>
 
   <!-- if have table please add qor-section__table className -->

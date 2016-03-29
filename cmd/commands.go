@@ -1,31 +1,31 @@
-package commands
+package cmd
 
-import (
-	// 	"bytes"
-	"fmt"
-	// 	"log"
-	// 	// "net"
+// import (
+// 	"bytes"
+// "fmt"
+// 	"log"
+// 	// "net"
 
-	// 	"os"
-	// 	// "time"
+// 	"os"
+// 	// "time"
 
-	// 	// "bitbucket.org/grengojbo/ads-core/config"
-	// 	// "bitbucket.org/grengojbo/ads-core/core"
-	// 	// "bitbucket.org/grengojbo/ads-core/db"
-	// 	// "bitbucket.org/grengojbo/ads-core/services"
-	// 	apim "github.com/Netwurx/routeros-api-go"
-	"github.com/codegangsta/cli"
-	// 	"github.com/grengojbo/sw-cli/config"
-	// 	"github.com/grengojbo/sw-cli/mikrotik"
-	// 	"github.com/jinzhu/configor"
-	// 	"golang.org/x/crypto/ssh"
-	// 	// "crypto/ssh"
-	// 	// "github.com/gin-gonic/gin"
-	// 	// "github.com/jinzhu/configor"
-	// 	// "github.com/fatih/color"
-	// 	// "github.com/qor/qor-example/config/admin"
-	// 	// "github.com/qor/qor-example/db/migrations"
-)
+// 	// "bitbucket.org/grengojbo/ads-core/config"
+// 	// "bitbucket.org/grengojbo/ads-core/core"
+// 	// "bitbucket.org/grengojbo/ads-core/db"
+// 	// "bitbucket.org/grengojbo/ads-core/services"
+// 	apim "github.com/Netwurx/routeros-api-go"
+// "github.com/codegangsta/cli"
+// 	"github.com/grengojbo/sw-cli/config"
+// 	"github.com/grengojbo/sw-cli/mikrotik"
+// 	"github.com/jinzhu/configor"
+// 	"golang.org/x/crypto/ssh"
+// 	// "crypto/ssh"
+// 	// "github.com/gin-gonic/gin"
+// 	// "github.com/jinzhu/configor"
+// 	// "github.com/fatih/color"
+// 	// "github.com/qor/qor-example/config/admin"
+// 	// "github.com/qor/qor-example/db/migrations"
+// )
 
 // // Show debug message
 // func debug(v ...interface{}) {
@@ -55,29 +55,29 @@ import (
 // 	return conf, err
 // }
 
-var Commands = []cli.Command{
-	// 	cmdShow,
-	// 	cmdRun,
-	// 	cmdPing,
-	cmdMigrate,
-}
+// var Commands = []cli.Command{
+// 	// 	cmdShow,
+// 	// 	cmdRun,
+// 	// 	cmdPing,
+// 	// cmdMigrate,
+// }
 
-var cmdMigrate = cli.Command{
-	Name:   "migrate",
-	Usage:  "Migration DB",
-	Action: runMigrate,
-}
+// var cmdMigrate = cli.Command{
+// 	Name:   "migrate",
+// 	Usage:  "Migration DB",
+// 	Action: runMigrate,
+// }
 
-func runMigrate(c *cli.Context) {
-	fmt.Println("Start Migration ...")
-	// conf, err := getConfig(c)
-	// assert(err)
-	// m := Routerboard{Config: &conf, Verbose: c.GlobalBool("verbose")}
-	// err, _ = m.RouterboardInterface("178.151.111.129", "admin", "1AzRss53")
-	// assert(err)
-	fmt.Println("End migration :)")
+// func runMigrate(c *cli.Context) {
+// 	fmt.Println("Start Migration ...")
+// 	// conf, err := getConfig(c)
+// 	// assert(err)
+// 	// m := Routerboard{Config: &conf, Verbose: c.GlobalBool("verbose")}
+// 	// err, _ = m.RouterboardInterface("178.151.111.129", "admin", "1AzRss53")
+// 	// assert(err)
+// 	fmt.Println("End migration :)")
 
-}
+// }
 
 // var cmdShow = cli.Command{
 // 	Name:  "show",

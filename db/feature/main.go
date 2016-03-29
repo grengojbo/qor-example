@@ -1,9 +1,10 @@
 package feature
 
 import (
+	"fmt"
 	"path/filepath"
 
-	// "github.com/apertoire/mlog"
+	"github.com/apertoire/mlog"
 	"github.com/jinzhu/configor"
 	"github.com/qor/qor-example/db/seeds"
 )
@@ -25,7 +26,7 @@ func Load() {
 
 func CreateLanguages() {
 	for _, c := range Seeds.Languages {
-    fmt.Println(c)
+		fmt.Println(c)
 		mlog.Trace("Languages: %v", c)
 		// 	language := models.Language{}
 		// 	language.Name = c.Name

@@ -15,7 +15,10 @@ import (
 func CategoryIndex(ctx *gin.Context) {
 	mlog.Start(mlog.LevelTrace, "")
 	var categorys []models.Category
-	acceptLanguage := ctx.Request.Header.Get("Accept-Language")[0:2]
+	acceptLanguage := ctx.Request.Header.Get("Accept-Language")
+	if len(acceptLanguage) > 0 {
+		acceptLanguage = acceptLanguage[0:2]
+	}
 	locale := ctx.Request.Header.Get("Locale")
 	if len(locale) == 0 {
 		locale = config.Config.Locale

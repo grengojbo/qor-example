@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/grengojbo/gotools"
 	"github.com/jinzhu/gorm"
 	"github.com/qor/activity"
 	"github.com/qor/admin"
@@ -70,8 +71,7 @@ func init() {
 			Rows: [][]string{
 				{"Name"},
 				{"NameSmall"},
-				{"Code", "Price"},
-				{"Unit", "Disabled"},
+				{"Code", "Price", "Unit"},
 			}},
 		&admin.Section{
 			Title: "Organization",
@@ -89,7 +89,7 @@ func init() {
 		}})
 	}
 
-	product.IndexAttrs("-ColorVariations", "-NameSmall")
+	product.IndexAttrs("-ColorVariations", "-NameSmall", "-Description")
 
 	product.Action(&admin.Action{
 		Name: "View On Site",
@@ -134,6 +134,17 @@ func init() {
 			return true
 		},
 		Modes: []string{"index", "edit", "menu_item"},
+	})
+
+	product.Scope(&admin.Scope{Name: "pactive", Label: "Enable", Group: "Product status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Where(models.Product{Enabled: true})
+		},
+	})
+	product.Scope(&admin.Scope{Name: "pnoactive", Label: "Disable", Group: "Product status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Not(models.Product{Enabled: true})
+		},
 	})
 
 	Admin.AddResource(&models.Color{}, &admin.Config{Menu: []string{"Product Management"}})
@@ -256,6 +267,50 @@ func init() {
 	order.ShowAttrs("-DiscountValue", "-State")
 	order.SearchAttrs("User.Name", "User.Email", "ShippingAddress.ContactName", "ShippingAddress.Address1", "ShippingAddress.Address2")
 
+	balance := Admin.AddResource(&models.Balance{}, &admin.Config{Menu: []string{"Order Management"}})
+	balance.Meta(&admin.Meta{Name: "SubscribedAt", Type: "date"})
+	balance.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
+	// https://github.com/qor/qor/blob/master/resource/resource.go#L39-L40
+	balance.SaveHandler = func(record interface{}, context *qor.Context) error {
+		b := record.(*models.Balance)
+		// b.Count += float32(2)
+		if b.UserID < 1 {
+			u := context.CurrentUser.(*models.User)
+			b.UserID = u.ID
+		}
+		context.GetDB().Save(&b)
+		return nil
+	}
+
+	balance.IndexAttrs("Product", "Count", "SubscribedAt", "User", "Store")
+	balance.NewAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Product"},
+				{"Count", "SubscribedAt"},
+			}},
+		&admin.Section{
+			Title: "Store",
+			Rows: [][]string{
+				{"User", "Store"},
+			}},
+		"Comment",
+	)
+	balance.EditAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Product"},
+				{"Count", "SubscribedAt"},
+			}},
+		&admin.Section{
+			Title: "Store",
+			Rows: [][]string{
+				{"User", "Store"},
+			}},
+		"Comment",
+	)
+	balance.ShowAttrs(balance.NewAttrs())
+
 	// Add activity for order
 	activity.Register(order)
 
@@ -318,27 +373,28 @@ func init() {
 	user := Admin.AddResource(&models.User{})
 	user.Meta(&admin.Meta{Name: "Gender", Type: "select_one", Collection: []string{"Male", "Female", "Unknown"}})
 
-	user.IndexAttrs("ID", "Email", "Name", "LastName", "FirstName", "Gender", "Role", "IsActive")
+	user.IndexAttrs("ID", "Email", "Name", "LastName", "FirstName", "Gender", "Role", "Enabled")
 	user.SearchAttrs("Name", "LastName", "FirstName", "Email", "Organization.Name")
 	user.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
-	// user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
-	user.Scope(&admin.Scope{Name: "active", Label: "Is Active", Group: "User Status",
+	user.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
+	user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
+	user.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where(models.User{IsActive: true})
+			return db.Where(models.User{Enabled: true})
 		},
 	})
-	user.Scope(&admin.Scope{Name: "noactive", Label: "Is not Active", Group: "User Status",
+	user.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "User Status",
 		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where("is_active != true")
+			return db.Not(models.User{Enabled: true})
 		},
 	})
-	user.ShowAttrs(
+	user.NewAttrs("-Password", "-PasswordConfirm")
+	user.EditAttrs(
 		&admin.Section{
 			Title: "Basic Information",
 			Rows: [][]string{
-				{"Name", "IsActive"},
+				{"Name", "Email"},
 				{"LastName", "FirstName"},
-				{"Email", "Password"},
 				{"Avatar"},
 				{"Gender", "Languages", "Role"},
 			}},
@@ -346,8 +402,80 @@ func init() {
 		"Addresses",
 		"Comment",
 	)
-	user.EditAttrs(user.ShowAttrs())
-	user.NewAttrs(user.ShowAttrs())
+	// user.ShowAttrs(user.EditAttrs())
+
+	user.Action(&admin.Action{
+		Name: "Disable",
+		Handle: func(arg *admin.ActionArgument) error {
+			for _, record := range arg.FindSelectedRecords() {
+				arg.Context.DB.Model(record.(*models.User)).Update("enabled", false)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *admin.Context) bool {
+			if u, ok := record.(*models.User); ok {
+				return u.Enabled == true
+			}
+			return true
+		},
+		Modes: []string{"index", "edit", "menu_item"},
+	})
+
+	user.Action(&admin.Action{
+		Name: "Enable",
+		Handle: func(arg *admin.ActionArgument) error {
+			for _, record := range arg.FindSelectedRecords() {
+				arg.Context.DB.Model(record.(*models.User)).Update("enabled", true)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *admin.Context) bool {
+			if u, ok := record.(*models.User); ok {
+				return u.Enabled == false
+			}
+			return true
+		},
+		Modes: []string{"index", "edit", "menu_item"},
+	})
+	// define actions for User
+	type PasswordArgument struct {
+		Password        string
+		PasswordConfirm string
+	}
+
+	passwd := Admin.NewResource(&PasswordArgument{})
+	passwd.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
+	passwd.AddValidator(func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
+		if meta := metaValues.Get("Password"); meta != nil {
+			if name := utils.ToString(meta.Value); strings.TrimSpace(name) == "" {
+				return validations.NewError(record, "Password", "Password can't be blank")
+			}
+		}
+		return nil
+	})
+
+	user.Action(&admin.Action{
+		Name: "Change password",
+		Handle: func(argument *admin.ActionArgument) error {
+			var (
+				el = argument.Argument.(*PasswordArgument)
+			)
+			// if el.Password != "" && el.PasswordConfirm != "" && len(el.Password) > p && el.Password == el.PasswordConfirm {
+			for _, record := range argument.FindSelectedRecords() {
+				u := record.(*models.User)
+				u.Password = gotools.PasswordBcrypt(el.Password)
+				if err := argument.Context.GetDB().Save(u).Error; err != nil {
+					return err
+				}
+			}
+			// } else {
+			// return errors.New(fmt.Sprintf("Invalid password (min length %d)", config.Config.PasswordLength))
+			// }
+			return nil
+		},
+		Resource: passwd,
+		Modes:    []string{"show", "menu_item"},
+	})
 
 	// Add Newsletter
 	newsletter := Admin.AddResource(&models.Newsletter{})

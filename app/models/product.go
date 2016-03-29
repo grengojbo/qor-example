@@ -49,7 +49,7 @@ type Product struct {
 	Price           float32          `l10n:"sync" json:"price"`
 	Description     string           `sql:"size:2000" json:"description"`
 	ColorVariations []ColorVariation `l10n:"sync"`
-	Enabled         bool             `json:"-"`
+	Enabled         bool             `sql:"default:false" json:"-"`
 	Picture         media_library.FileSystem
 	Image           VarioationImageStorage `sql:"type:varchar(4096)"`
 }

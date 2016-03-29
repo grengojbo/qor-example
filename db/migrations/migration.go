@@ -14,7 +14,8 @@ import (
 
 var Admin *admin.Admin
 
-func init() {
+// func init() {
+func Run() {
 	log.Println("Start migration ...")
 	AutoMigrate(&media_library.AssetManager{})
 
@@ -44,7 +45,7 @@ func init() {
 	log.Println("model: Store Ok")
 	AutoMigrate(&models.Store{})
 
-	log.Println("model: Setting")
+	log.Println("model: Setting Ok")
 	AutoMigrate(&models.Setting{})
 
 	log.Println("model: Organization Ok")
@@ -56,6 +57,9 @@ func init() {
 	AutoMigrate(&models.LogLogin{})
 	log.Println("model: Car Ok")
 	AutoMigrate(&models.Car{})
+
+	log.Println("model: Balance Ok")
+	AutoMigrate(&models.Balance{})
 
 	log.Println("model: SEOSetting")
 	AutoMigrate(&models.SEOSetting{})
