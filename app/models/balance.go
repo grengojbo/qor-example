@@ -7,6 +7,16 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+type BalanceApi struct {
+	ID        uint    `json:"id"`
+	ProductID uint    `json:"product"`
+	Count     float32 `json:"count"`
+	Price     float32 `json:"price"`
+	UserID    uint    `json:"user"`
+	StoreID   uint    `json:"store"`
+	Comment   string  `json:"comment"`
+}
+
 type Balance struct {
 	gorm.Model
 	ProductID    uint
@@ -18,7 +28,7 @@ type Balance struct {
 	StoreID      uint
 	Store        Store
 	SubscribedAt time.Time
-	Last         bool
+	Last         bool `sql:"default:false"`
 	Comment      string
 }
 
