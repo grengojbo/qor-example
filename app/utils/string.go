@@ -28,3 +28,23 @@ func GetNumber(card string) (res string) {
 	v, _ := strconv.ParseInt(card, 10, 32)
 	return fmt.Sprintf("%d", v)
 }
+
+func GetNumberOfButtonsForPagination(TotalCount int, limit int) int {
+	num := (int)(TotalCount / limit)
+	if TotalCount%limit > 0 {
+		num++
+	}
+	return num
+}
+
+func RemoveDuplicates(a []uint) []uint {
+	result := []uint{}
+	seen := map[uint]uint{}
+	for _, val := range a {
+		if _, ok := seen[val]; !ok {
+			result = append(result, val)
+			seen[val] = val
+		}
+	}
+	return result
+}
