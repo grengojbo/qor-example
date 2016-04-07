@@ -22,8 +22,10 @@ _testmain.go
 *.exe
 *.test
 *.prof
+*.orig
 runner-build
 qor-example
+qor-cli
 
 config/database*yml
 public/system
