@@ -1,42 +1,15 @@
 package controllers
 
 import (
-	"net/http"
+	"html/template"
 	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/qor/qor-example/app/models"
+	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/db"
 	"github.com/qor/seo"
 )
-
-func ProductIndex(ctx *gin.Context) {
-	var (
-		products   []models.Product
-		seoSetting models.SEOSetting
-	)
-
-	db.DB.Limit(10).Find(&products)
-	db.DB.First(&seoSetting)
-
-	ctx.HTML(
-		http.StatusOK,
-		"product_index.tmpl",
-		gin.H{
-			"Products": products,
-			"SeoTag":   seoSetting.DefaultPage.Render(seoSetting),
-			"MicroSearch": seo.MicroSearch{
-				URL:    "http://demo.getqor.com",
-				Target: "http://demo.getqor.com/search?q=",
-			}.Render(),
-			"MicroContact": seo.MicroContact{
-				URL:         "http://demo.getqor.com",
-				Telephone:   "080-0012-3232",
-				ContactType: "Customer Service",
-			}.Render(),
-		},
-	)
-}
 
 func ProductShow(ctx *gin.Context) {
 	var (
@@ -56,9 +29,8 @@ func ProductShow(ctx *gin.Context) {
 	db.DB.Preload("Images").Preload("Product").Preload("Color").Preload("SizeVariations.Size").Where(&models.ColorVariation{ProductID: product.ID, ColorCode: colorCode}).First(&colorVariation)
 	db.DB.First(&seoSetting)
 
-	ctx.HTML(
-		http.StatusOK,
-		"product_show.tmpl",
+	config.View.Funcs(funcsMap()).Execute(
+		"product_show",
 		gin.H{
 			"Product":        product,
 			"ColorVariation": colorVariation,
@@ -72,5 +44,22 @@ func ProductShow(ctx *gin.Context) {
 				Image:       colorVariation.MainImageUrl(),
 			}.Render(),
 		},
+		ctx.Request,
+		ctx.Writer,
 	)
+}
+
+func funcsMap() template.FuncMap {
+	return map[string]interface{}{
+		"related_products": func(cv models.ColorVariation) []models.Product {
+			var products []models.Product
+			db.DB.Preload("ColorVariations").Preload("ColorVariations.Images").Limit(4).Find(&products, "id <> ?", cv.ProductID)
+			return products
+		},
+		"other_also_bought": func(cv models.ColorVariation) []models.Product {
+			var products []models.Product
+			db.DB.Preload("ColorVariations").Preload("ColorVariations.Images").Order("id ASC").Limit(8).Find(&products, "id <> ?", cv.ProductID)
+			return products
+		},
+	}
 }
