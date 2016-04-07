@@ -1,4 +1,4 @@
-MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin
+MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget
 DB_NAME=database.dev.yml
 
 OSNAME=$(shell uname)

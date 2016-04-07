@@ -1,9 +1,11 @@
 package routes
 
 import (
-	"fmt"
-	"html/template"
+	"net/http"
+	"strings"
 	"time"
+	// "net/http"
+	// "strings"
 
 	"github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/contrib/sessions"
@@ -39,7 +41,8 @@ func Router() *gin.Engine {
 	}
 
 	// for _, path := range []string{"static", "downloads"} {
-	for _, path := range []string{"css", "fonts", "static", "images", "javascripts", "js", "system", "downloads"} {
+	// for _, path := range []string{"css", "fonts", "static", "images", "javascripts", "js", "system", "downloads"} {
+	for _, path := range []string{"dist", "fonts", "vendors", "images", "static", "downloads"} {
 		router.Static(fmt.Sprintf("/%s", path), fmt.Sprintf("public/%s", path))
 	}
 
@@ -51,7 +54,7 @@ func Router() *gin.Engine {
 		panic(err)
 	}
 	router.GET("/", controllers.HomeIndex)
-	router.GET("/products", controllers.ProductIndex)
+	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
 	router.GET("/login", controllers.LoginForm)
 	router.POST("/login", controllers.Login)

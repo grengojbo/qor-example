@@ -48,6 +48,7 @@ var Config = struct {
 var (
 	Root       = os.Getenv("GOPATH") + "/src/github.com/qor/qor-example"
 	FileConfig = os.Getenv("GOPATH") + "/config/database.yml"
+	View *render.Render
 )
 
 // Set environment variable config path -> export QORCONFIG=/etc/qor/production.yml

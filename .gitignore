@@ -27,8 +27,6 @@ _testmain.go
 *.orig
 runner-build
 qor-example
-qor-server
-qor-kassa
 qor-cli
 
 config/database*yml
@@ -45,4 +43,9 @@ dist/*
 harp.json
 .harp
 tmp/*
-dist/*
+
+node_modules/
+public/assets/
+*.js.map
+*.css.map
+npm-debug.log
