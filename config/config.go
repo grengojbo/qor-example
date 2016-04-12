@@ -6,6 +6,7 @@ import (
 
 	"github.com/jinzhu/configor"
 	"github.com/qor/i18n"
+	"github.com/qor/render"
 )
 
 var Config = struct {
@@ -48,6 +49,7 @@ var Config = struct {
 var (
 	Root       = os.Getenv("GOPATH") + "/src/github.com/qor/qor-example"
 	FileConfig = os.Getenv("GOPATH") + "/config/database.yml"
+	View       *render.Render
 )
 
 // Set environment variable config path -> export QORCONFIG=/etc/qor/production.yml
@@ -63,4 +65,5 @@ func init() {
 	if err := configor.Load(&Config, FileConfig); err != nil {
 		panic(err)
 	}
+	View = render.New()
 }
