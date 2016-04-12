@@ -1,4 +1,5 @@
 MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin
+QORFILE=activity i18n
 DB_NAME=database.dev.yml
 
 OSNAME=$(shell uname)
@@ -27,6 +28,9 @@ GIT_COMMIT="$(shell git rev-parse HEAD)"
 # Check if there are uncommited changes
 GIT_DIRTY="$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)"
 
+QOR_DIR="./dist/lib"
+DIST_PUBLIC="./dist/public"
+QOR_REPO="../"
 
 # Add the godep path to the GOPATH
 #GOPATH=$(shell godep path):$(shell echo $$GOPATH)
@@ -85,6 +89,28 @@ qor:
 
 git:
 	@for a in $(MODULES); do echo "-> $$a"; cd ../$$a && git pull; done
+
+view:
+	@#mkdir -p ${QOR_DIR}/github.com/qor/?/
+	@#cp -R ${QOR_REPO}?/views ${QOR_DIR}/github.com/qor/?/
+	@#cp -R ${QOR_DIR}/github.com/qor/?/views/assets ${DIST_PUBLIC}/admin/
+	@mkdir -p ${DIST_PUBLIC}/admin/assets
+	@#for a in $(QORFILE); do echo "-> $$a"; cp -R ${QOR_REPO}$$a/views ${QOR_DIR}/github.com/qor/$$a/ && cp -R ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets ${DIST_PUBLIC}/admin/; done
+	@mkdir -p ${QOR_DIR}/github.com/qor/activity
+	@cp -R ${QOR_REPO}activity/views ${QOR_DIR}/github.com/qor/activity/
+	@cp -R ${QOR_DIR}/github.com/qor/activity/views/themes/activity/assets ${DIST_PUBLIC}/admin/
+
+	@mkdir -p ${QOR_DIR}/github.com/qor/admin/
+	@cp -R ${QOR_REPO}admin/views ${QOR_DIR}/github.com/qor/admin/
+	@cp -R ${QOR_DIR}/github.com/qor/admin/views/assets ${DIST_PUBLIC}/admin/
+
+	@mkdir -p ${QOR_DIR}/github.com/qor/i18n/
+	@cp -R ${QOR_REPO}i18n/views ${QOR_DIR}/github.com/qor/i18n/
+	@cp -R ${QOR_DIR}/github.com/qor/i18n/views/themes/i18n/assets ${DIST_PUBLIC}/admin/
+
+	@mkdir -p ${QOR_DIR}/github.com/qor/l10n/
+	@cp -R ${QOR_REPO}l10n/views ${QOR_DIR}/github.com/qor/l10n/
+	@cp -R ${QOR_DIR}/github.com/qor/l10n/views/themes/l10n/assets ${DIST_PUBLIC}/admin/
 
 template:
 	@mkdir -p ./dist/config
