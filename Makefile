@@ -1,5 +1,5 @@
 MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render
-QORFILE=activity i18n
+QORTHEME=activity i18n l10n location media_library publish seo serializable_meta slug sorting widget worker
 DB_NAME=database.dev.yml
 
 OSNAME=$(shell uname)
@@ -28,9 +28,9 @@ GIT_COMMIT="$(shell git rev-parse HEAD)"
 # Check if there are uncommited changes
 GIT_DIRTY="$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)"
 
-QOR_DIR="./dist/lib"
-DIST_PUBLIC="./dist/public"
-QOR_REPO="../"
+QOR_DIR="${PROJECT_DIR}/dist/lib"
+DIST_PUBLIC="${PROJECT_DIR}/dist/public"
+QOR_REPO="${PROJECT_DIR}/../"
 
 # Add the godep path to the GOPATH
 #GOPATH=$(shell godep path):$(shell echo $$GOPATH)
@@ -84,33 +84,38 @@ install:
 	@#go get -v -u
 
 qor:
-	@go get -v ./...
-	@for a in $(MODULES); do echo "-> $$a"; cd ../ && git clone https://github.com/qor/$$a.git; done
+	@#go get -v ./...
+	@#echo ${PROJECT_DIR}
+	@for a in $(MODULES); do echo "-> $$a"; cd ${PROJECT_DIR}/../ && test -e ./$$a || git clone https://github.com/qor/$$a.git; done
 
 git:
-	@for a in $(MODULES); do echo "-> $$a"; cd ../$$a && git pull; done
+	@for a in $(MODULES); do test ! -e ../$$a || echo "-> $$a"; test -e ../$$a || echo "Is NOT repo: https://github.com/qor/$$a"; test ! -e ../$$a || cd ../$$a && test ! -e ../$$a || git pull; done
 
 view:
+	@test ! -e ./dist || rm -R ./dist
 	@#mkdir -p ${QOR_DIR}/github.com/qor/?/
 	@#cp -R ${QOR_REPO}?/views ${QOR_DIR}/github.com/qor/?/
 	@#cp -R ${QOR_DIR}/github.com/qor/?/views/assets ${DIST_PUBLIC}/admin/
 	@mkdir -p ${DIST_PUBLIC}/admin/assets
 	@#for a in $(QORFILE); do echo "-> $$a"; cp -R ${QOR_REPO}$$a/views ${QOR_DIR}/github.com/qor/$$a/ && cp -R ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets ${DIST_PUBLIC}/admin/; done
-	@mkdir -p ${QOR_DIR}/github.com/qor/activity
-	@cp -R ${QOR_REPO}activity/views ${QOR_DIR}/github.com/qor/activity/
-	@cp -R ${QOR_DIR}/github.com/qor/activity/views/themes/activity/assets ${DIST_PUBLIC}/admin/
+
+	@#mkdir -p ${QOR_DIR}/github.com/qor/activity
+	@#cp -R ${QOR_REPO}activity/views ${QOR_DIR}/github.com/qor/activity/
+	@#cp -R ${QOR_DIR}/github.com/qor/activity/views/themes/activity/assets ${DIST_PUBLIC}/admin/
 
 	@mkdir -p ${QOR_DIR}/github.com/qor/admin/
 	@cp -R ${QOR_REPO}admin/views ${QOR_DIR}/github.com/qor/admin/
 	@cp -R ${QOR_DIR}/github.com/qor/admin/views/assets ${DIST_PUBLIC}/admin/
 
-	@mkdir -p ${QOR_DIR}/github.com/qor/i18n/
-	@cp -R ${QOR_REPO}i18n/views ${QOR_DIR}/github.com/qor/i18n/
-	@cp -R ${QOR_DIR}/github.com/qor/i18n/views/themes/i18n/assets ${DIST_PUBLIC}/admin/
+	@#mkdir -p ${QOR_DIR}/github.com/qor/i18n/
+	@#cp -R ${QOR_REPO}i18n/views ${QOR_DIR}/github.com/qor/i18n/
+	@#cp -R ${QOR_DIR}/github.com/qor/i18n/views/themes/i18n/assets ${DIST_PUBLIC}/admin/
 
-	@mkdir -p ${QOR_DIR}/github.com/qor/l10n/
-	@cp -R ${QOR_REPO}l10n/views ${QOR_DIR}/github.com/qor/l10n/
-	@cp -R ${QOR_DIR}/github.com/qor/l10n/views/themes/l10n/assets ${DIST_PUBLIC}/admin/
+	@#mkdir -p ${QOR_DIR}/github.com/qor/media_library/
+	@#cp -R ${QOR_REPO}l10n/views ${QOR_DIR}/github.com/qor/l10n/
+	@#cp -R ${QOR_DIR}/github.com/qor/l10n/views/themes/l10n/assets ${DIST_PUBLIC}/admin/
+
+	@for a in $(QORTHEME); do echo "--> $$a"; mkdir -p ${QOR_DIR}/github.com/qor/$$a; cp -R ${QOR_REPO}$$a/views ${QOR_DIR}/github.com/qor/$$a/; test ! -e ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets || cp -R ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets ${DIST_PUBLIC}/admin/; done
 
 template:
 	@mkdir -p ./dist/config
