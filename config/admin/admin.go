@@ -309,7 +309,7 @@ func init() {
 			}},
 		"Comment",
 	)
-	balance.ShowAttrs(balance.NewAttrs())
+	// balance.ShowAttrs(balance.NewAttrs())
 
 	// Add activity for order
 	activity.Register(order)
@@ -484,6 +484,8 @@ func init() {
 
 	// Add Organization
 	organization := Admin.AddResource(&models.Organization{}, &admin.Config{Menu: []string{"Store Management"}})
+	organization.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
+
 	organization.IndexAttrs("ID", "Name", "Enabled")
 	organization.EditAttrs(
 		&admin.Section{
@@ -493,9 +495,63 @@ func init() {
 				{"Director", "Email"},
 				{"Logo"},
 			}},
+		&admin.Section{
+			Title: "Finance",
+			Rows: [][]string{
+				{"Edrpou", "Ipn"},
+				{"SvidPlanNaloga", "Score"},
+				{"Bank", "Mfo"},
+			}},
 		"Location",
 		"Comment",
 	)
+	organization.NewAttrs(organization.EditAttrs())
+
+	organization.Action(&admin.Action{
+		Name: "Enable",
+		Handle: func(arg *admin.ActionArgument) error {
+			for _, record := range arg.FindSelectedRecords() {
+				arg.Context.DB.Model(record.(*models.Organization)).Update("enabled", true)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *admin.Context) bool {
+			if self, ok := record.(*models.Organization); ok {
+				return self.Enabled == false
+			}
+			return true
+		},
+		Modes: []string{"index", "edit", "menu_item"},
+	})
+
+	organization.Action(&admin.Action{
+		Name: "Disable",
+		Handle: func(arg *admin.ActionArgument) error {
+			for _, record := range arg.FindSelectedRecords() {
+				arg.Context.DB.Model(record.(*models.Organization)).Update("enabled", false)
+			}
+			return nil
+		},
+		Visible: func(record interface{}, context *admin.Context) bool {
+			if self, ok := record.(*models.Organization); ok {
+				return self.Enabled == true
+			}
+			return true
+		},
+		Modes: []string{"index", "edit", "menu_item"},
+	})
+
+	organization.Scope(&admin.Scope{Name: "oactive", Label: "Enable", Group: "Organization status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Where(models.Organization{Enabled: true})
+		},
+	})
+
+	organization.Scope(&admin.Scope{Name: "onoactive", Label: "Disable", Group: "Organization status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Not(models.Organization{Enabled: true})
+		},
+	})
 
 	// Add Car
 	car := Admin.AddResource(&models.Car{}, &admin.Config{Menu: []string{"Store Management"}})

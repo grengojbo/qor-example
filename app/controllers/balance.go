@@ -113,8 +113,8 @@ func BalanceNewApi(ctx *gin.Context) {
 			UserID:       balance.UserID,
 			StoreID:      balance.StoreID,
 			SubscribedAt: time.Now(),
-			State:        "draft",
-			Comment:      balance.Comment,
+			// State:        "draft",
+			Comment: balance.Comment,
 		}
 		if err := db.DB.Create(&bal).Error; err != nil {
 			ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": fmt.Sprintf("Is not save : %v", err)})
