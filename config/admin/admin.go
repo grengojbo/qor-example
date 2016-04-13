@@ -484,7 +484,18 @@ func init() {
 
 	// Add Organization
 	organization := Admin.AddResource(&models.Organization{}, &admin.Config{Menu: []string{"Store Management"}})
-	organization.IndexAttrs("ID", "Name", "IsActive")
+	organization.IndexAttrs("ID", "Name", "Enabled")
+	organization.EditAttrs(
+		&admin.Section{
+			Title: "Basic Information",
+			Rows: [][]string{
+				{"Name"},
+				{"Director", "Email"},
+				{"Logo"},
+			}},
+		"Location",
+		"Comment",
+	)
 
 	// Add Car
 	car := Admin.AddResource(&models.Car{}, &admin.Config{Menu: []string{"Store Management"}})
