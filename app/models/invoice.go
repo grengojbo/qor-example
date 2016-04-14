@@ -1,6 +1,7 @@
 package models
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -19,8 +20,22 @@ type InvoiceIn struct {
 	ShippedAt      *time.Time
 	CancelledAt    *time.Time
 	Document       media_library.FileSystem
-	Invoices       []InvoiceOutItem `json:"invoices"`
+	Invoices       []InvoiceInItem `json:"invoices"`
 	transition.Transition
+}
+
+func (self *InvoiceIn) BeforeSave(tx *gorm.DB) (err error) {
+	// amount := float32(0)
+	// self.Amount = self.Quantity * self.Price
+	for _, item := range self.Invoices {
+		if item.Price == float32(0) || item.Price < float32(0) {
+			item.Price = float32(1)
+		}
+		item.Amount = item.Quantity * item.Price
+		self.Amount += item.Amount
+	}
+	// fmt.Println("-------------> Invoice in Amount:", self.Amount)
+	return nil
 }
 
 type InvoiceInItem struct {
@@ -33,6 +48,14 @@ type InvoiceInItem struct {
 	Quantity    float32 `json:"count"`
 	Price       float32 `json:"price"`
 	Amount      float32 `json:"summa"`
+}
+
+func (self *InvoiceInItem) BeforeSave(tx *gorm.DB) (err error) {
+	if self.Amount == float32(0) {
+		self.Amount = self.Quantity * self.Price
+		fmt.Println("-------------> InvoiceInItem Amount:", self.Amount)
+	}
+	return nil
 }
 
 type InvoiceOut struct {
@@ -84,4 +107,13 @@ type InvoiceList struct {
 type InvoiceCard struct {
 	Name string `json:"name"`
 	Rfid []uint `json:"card"`
+}
+
+var (
+	InvoiceInState = transition.New(&InvoiceIn{})
+	// InvoiceInItemState = transition.New(&InvoiceInItem{})
+)
+
+func init() {
+	InvoiceInState.Initial("draft")
 }

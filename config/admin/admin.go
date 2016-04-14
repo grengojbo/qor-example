@@ -155,13 +155,63 @@ func init() {
 	// Add Invoice
 	invoice := Admin.AddResource(&models.InvoiceIn{}, &admin.Config{Menu: []string{"Order Management"}})
 	invoice.Meta(&admin.Meta{Name: "ShippedAt", Type: "date"})
-	invoice.Meta(&admin.Meta{Name: "CancelledAt", Type: "date"})
+	invoice.Meta(&admin.Meta{Name: "CancelledAt", Type: "date", Permission: roles.Deny(roles.Update, roles.Anyone)})
+	invoice.Meta(&admin.Meta{Name: "Amount", Permission: roles.Deny(roles.Update, roles.Anyone)})
 
-	// invoiceItemMeta := invoice.Meta(&admin.Meta{Name: "InvoiceItems"})
-	// invoiceItemMeta.Resource.NewAttrs("-Code")
+	invoiceInMeta := invoice.Meta(&admin.Meta{Name: "Invoices"})
+	invoiceInMeta.Resource.NewAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Product"},
+				{"Quantity", "Price"},
+			}},
+	)
+	invoiceInMeta.Resource.ShowAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Product"},
+				{"Quantity", "Price", "Amount"},
+			}},
+	)
 	// invoiceItemMeta.Resource.EditAttrs("-Name")
 
-	invoice.IndexAttrs("-Document")
+	invoice.IndexAttrs("-Document", "-Invoices")
+	invoice.NewAttrs(
+		&admin.Section{
+			Rows: [][]string{
+				{"Name", "Amount"},
+				{"Organization", "Store"},
+				{"ShippedAt", "CancelledAt"},
+				{"Document"},
+			}},
+		"Invoices",
+	)
+	invoice.AddValidator(func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
+		if meta := metaValues.Get("Name"); meta != nil {
+			if name := utils.ToString(meta.Value); strings.TrimSpace(name) == "" {
+				return validations.NewError(record, "Name", "Name can't be blank")
+			}
+		}
+		if meta := metaValues.Get("Organization"); meta != nil {
+			// fmt.Println("-----------> ", meta.Value)
+			if name := utils.ToUint(meta.Value); name == 0 {
+				return validations.NewError(record, "Organization", "Organization can't be blank")
+			}
+		}
+		if meta := metaValues.Get("Store"); meta != nil {
+			// fmt.Println("-----------> ", meta.Value)
+			if name := utils.ToUint(meta.Value); name == 0 {
+				return validations.NewError(record, "Store", "Store can't be blank")
+			}
+		}
+		if meta := metaValues.Get("Invoices"); meta != nil {
+			// fmt.Println("-----------> ", meta.Value)
+			if name := utils.ToArray(meta.Value); len(name) == 0 {
+				return validations.NewError(record, "Invoices", "Items can't be blank")
+			}
+		}
+		return nil
+	})
 
 	// Add Order
 	order := Admin.AddResource(&models.Order{}, &admin.Config{Menu: []string{"Order Management"}})
