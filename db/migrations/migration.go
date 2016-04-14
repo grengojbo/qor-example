@@ -59,6 +59,11 @@ func Run() {
 	log.Println("model: Car Ok")
 	AutoMigrate(&models.Car{})
 
+	log.Println("model: InvoiceIn Ok")
+	AutoMigrate(&models.InvoiceIn{}, &models.InvoiceInItem{})
+	log.Println("model: InvoiceOut Ok")
+	AutoMigrate(&models.InvoiceOut{}, &models.InvoiceOutItem{})
+
 	log.Println("model: Balance Ok")
 	AutoMigrate(&models.Balance{})
 

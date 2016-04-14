@@ -152,6 +152,17 @@ func init() {
 	Admin.AddResource(&models.Category{}, &admin.Config{Menu: []string{"Product Management"}})
 	Admin.AddResource(&models.Collection{}, &admin.Config{Menu: []string{"Product Management"}})
 
+	// Add Invoice
+	invoice := Admin.AddResource(&models.InvoiceIn{}, &admin.Config{Menu: []string{"Order Management"}})
+	invoice.Meta(&admin.Meta{Name: "ShippedAt", Type: "date"})
+	invoice.Meta(&admin.Meta{Name: "CancelledAt", Type: "date"})
+
+	// invoiceItemMeta := invoice.Meta(&admin.Meta{Name: "InvoiceItems"})
+	// invoiceItemMeta.Resource.NewAttrs("-Code")
+	// invoiceItemMeta.Resource.EditAttrs("-Name")
+
+	invoice.IndexAttrs("-Document")
+
 	// Add Order
 	order := Admin.AddResource(&models.Order{}, &admin.Config{Menu: []string{"Order Management"}})
 	order.Meta(&admin.Meta{Name: "ShippingAddress", Type: "single_edit"})

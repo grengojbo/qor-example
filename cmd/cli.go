@@ -191,6 +191,15 @@ func runMigrate(c *cli.Context) {
 	fmt.Printf("VoucherItem, ")
 	AutoMigrate(&models.VoucherItem{})
 
+	fmt.Printf("InvoiceIn, ")
+	AutoMigrate(&models.InvoiceIn{})
+	fmt.Printf("InvoiceInItem, ")
+	AutoMigrate(&models.InvoiceInItem{})
+	fmt.Printf("InvoiceOut, ")
+	AutoMigrate(&models.InvoiceOut{})
+	fmt.Printf("InvoiceOutItem, ")
+	AutoMigrate(&models.InvoiceOutItem{})
+
 	fmt.Printf("Balance, ")
 	AutoMigrate(&models.Balance{})
 
