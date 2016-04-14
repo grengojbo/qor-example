@@ -1,5 +1,7 @@
 MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render
+
 QORTHEME=activity i18n l10n location media_library publish seo serializable_meta slug sorting widget worker
+
 DB_NAME=database.dev.yml
 
 OSNAME=$(shell uname)
@@ -28,7 +30,7 @@ GIT_COMMIT="$(shell git rev-parse HEAD)"
 # Check if there are uncommited changes
 GIT_DIRTY="$(shell test -n "`git status --porcelain`" && echo "+CHANGES" || true)"
 
-QOR_DIR="${PROJECT_DIR}/dist/lib"
+QOR_DIR="${PROJECT_DIR}/dist/lib/src"
 DIST_PUBLIC="${PROJECT_DIR}/dist/public"
 QOR_REPO="${PROJECT_DIR}/../"
 
@@ -93,23 +95,11 @@ git:
 
 view:
 	@test ! -e ./dist || rm -R ./dist
-	@#mkdir -p ${QOR_DIR}/github.com/qor/?/
-	@#cp -R ${QOR_REPO}?/views ${QOR_DIR}/github.com/qor/?/
-	@#cp -R ${QOR_DIR}/github.com/qor/?/views/assets ${DIST_PUBLIC}/admin/
 	@mkdir -p ${DIST_PUBLIC}/admin/assets
-	@#for a in $(QORFILE); do echo "-> $$a"; cp -R ${QOR_REPO}$$a/views ${QOR_DIR}/github.com/qor/$$a/ && cp -R ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets ${DIST_PUBLIC}/admin/; done
-
-	@#mkdir -p ${QOR_DIR}/github.com/qor/activity
-	@#cp -R ${QOR_REPO}activity/views ${QOR_DIR}/github.com/qor/activity/
-	@#cp -R ${QOR_DIR}/github.com/qor/activity/views/themes/activity/assets ${DIST_PUBLIC}/admin/
 
 	@mkdir -p ${QOR_DIR}/github.com/qor/admin/
 	@cp -R ${QOR_REPO}admin/views ${QOR_DIR}/github.com/qor/admin/
 	@cp -R ${QOR_DIR}/github.com/qor/admin/views/assets ${DIST_PUBLIC}/admin/
-
-	@#mkdir -p ${QOR_DIR}/github.com/qor/i18n/
-	@#cp -R ${QOR_REPO}i18n/views ${QOR_DIR}/github.com/qor/i18n/
-	@#cp -R ${QOR_DIR}/github.com/qor/i18n/views/themes/i18n/assets ${DIST_PUBLIC}/admin/
 
 	@#mkdir -p ${QOR_DIR}/github.com/qor/media_library/
 	@#cp -R ${QOR_REPO}l10n/views ${QOR_DIR}/github.com/qor/l10n/
@@ -117,52 +107,15 @@ view:
 
 	@for a in $(QORTHEME); do echo "--> $$a"; mkdir -p ${QOR_DIR}/github.com/qor/$$a; cp -R ${QOR_REPO}$$a/views ${QOR_DIR}/github.com/qor/$$a/; test ! -e ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets || cp -R ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets ${DIST_PUBLIC}/admin/; done
 
-template:
-	@mkdir -p ./dist/config
-	@mkdir -p ./dist/app/views/qor
-	@mkdir -p public/admin/assets
-	@rm -R ./public/admin/assets
-	@mkdir -p ./public/admin/assets/javascripts/vendors
-	@cp -R ../admin/views/* ./dist/app/views/qor/
-	@cp -R ../publish/views/themes/publish/* ./dist/app/views/qor/
-	@cp -R ../activity/views/themes/activity/actions ./dist/app/views/qor/
-	@cp -R ../i18n/exchange_actions/views/themes/i18n/actions ./dist/app/views/qor/
-	@#cp ../i18n/views/themes/i18n/inline-edit-libs.tmpl.tmpl ./dist/app/views/qor/
-	@#cp ../i18n/views/themes/i18n/index.tmpl ./dist/app/views/qor/
-	@#cp ../l10n/views/themes/l10n/new.tmpl ./dist/app/views/qor/
-	@#cp ../seo/views/themes/seo/edit.tmpl ./dist/app/views/qor/
-	@#cp ../worker/views/themes/worker/edit.tmpl ./dist/app/views/qor/
-	@#cp ../worker/views/themes/worker/new.tmpl ./dist/app/views/qor/
-	@cp -R ../l10n/views/metas ./dist/app/views/qor/
-	@cp -R ../l10n/views/themes/l10n/actions ./dist/app/views/qor/
-	@cp -R ../location/views/metas ./dist/app/views/qor/
-	@cp -R ../media_library/views/metas ./dist/app/views/qor/
-	@cp -R ../seo/views/metas ./dist/app/views/qor/
-	@cp -R ../seo/views/microdata ./dist/app/views/qor/
-	@cp -R ../serializable_meta/views/metas ./dist/app/views/qor/
-	@cp -R ../slug/views/metas ./dist/app/views/qor/
-	@cp -R ../sorting/views/themes/sorting/actions ./dist/app/views/qor/
-	@cp -R ../worker/views/themes/worker/actions ./dist/app/views/qor/
-	@cp -R ./app/views/* ./dist/app/views/
-
 assets:
+	@mkdir -p ./dist/config
 	@cp ./config/database.yml ./dist/config/
-	@cp -R ./dist/app/views/qor/assets ./public/admin/
-	@#cp ../qor/bower_components/jquery/dist/jquery.min.map ./public/admin/assets/javascripts/vendors/
-	@cp -R ../admin/views/assets ./public/admin/
-	@cp -R ../activity/views/themes/activity/assets ./public/admin/
-	@cp -R ../i18n/exchange_actions/views/assets ./public/admin/
-	@cp -R ../i18n/views/themes/i18n/assets ./public/admin/
-	@cp -R ../l10n/views/themes/l10n/assets ./public/admin/
-	@cp -R ../location/views/themes/location/assets ./public/admin/
-	@cp -R ../seo/views/themes/seo/assets ./public/admin/
-	@cp -R ../seo/images ./public/admin/assets/
-	@cp -R ../slug/views/themes/slug/assets ./public/admin/
-	@cp -R ../sorting/views/themes/sorting/assets ./public/admin/
-	@cp -R ../worker/views/themes/worker/assets ./public/admin/
-	@cp -R ../publish/views/themes/publish/assets ./public/admin/
+	@mkdir -p ./dist/app/views
+	@cp -R app/views/*.tmpl  ./dist/app/views/
+	@cp -R app/views/qor  ./dist/app/views/
+	@cp -R app/views/qor/assets  ./dist/public/admin/
 
-release: clean template assets
+release: clean view assets
 	@mkdir -p ./dist/bin
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
@@ -172,7 +125,7 @@ release: clean template assets
 	@GOOS=linux GOARCH=amd64 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o ./dist/bin/$(BIN_NAME_CLI) cmd/cli.go
 	@chmod 0755 ./dist/bin/$(BIN_NAME_CLI)
 
-arm: clean template assets
+arm: clean view assets
 	@mkdir -p ./dist/bin
 	@cp -R ./public ./dist/
 	@#go-bindata -nomemcopy ../qor/admin/views/...
@@ -202,11 +155,6 @@ run:
 	@echo Open in browser:
 	@echo	"	 http://localhost:7000/\n"
 	@echo ...............................................................
-	@#mv app/views/index.html app/views/home_index.tmpl
-	@#mv app/views/login.html app/views/login_kassa.tmpl
-	@#mv app/views/kassa.html app/views/kassa.tmpl
-	@#mv app/views/menu.html app/views/menu.tmpl
-	@#mv app/views/test.html app/views/test.tmpl
 	@QORCONFIG=${PROJECT_DIR}/config/${DB_NAME} go run main.go
 
 test:
@@ -218,9 +166,9 @@ test:
 build: clean
 	@echo "Building ${BIN_NAME} ${VERSION}"
 	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X main.BuildTime=${CUR_TIME} -X main.Version=${VERSION} -X main.GitHash=${GIT_COMMIT}' -o $(BIN_NAME) main.go
-	@echo "Building ${BIN_NAME_CLI} ${VERSION}"
-	@CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X cmd.BuildTime=${CUR_TIME} -X cmd.Version=${VERSION} -X cmd.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cmd/cli.go
-	@chmod 0755 ./$(BIN_NAME_CLI)
+	# @echo "Building ${BIN_NAME_CLI} ${VERSION}"
+	# @CGO_ENABLED=0 go build -a -tags netgo -ldflags '-w -X cmd.BuildTime=${CUR_TIME} -X cmd.Version=${VERSION} -X cmd.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cmd/cli.go
+	# @chmod 0755 ./$(BIN_NAME_CLI)
 
 
 cli: clean
