@@ -186,6 +186,7 @@ func init() {
 			}},
 		"Invoices",
 	)
+	invoice.EditAttrs(invoice.NewAttrs())
 	invoice.AddValidator(func(record interface{}, metaValues *resource.MetaValues, context *qor.Context) error {
 		if meta := metaValues.Get("Name"); meta != nil {
 			if name := utils.ToString(meta.Value); strings.TrimSpace(name) == "" {
@@ -193,19 +194,17 @@ func init() {
 			}
 		}
 		if meta := metaValues.Get("Organization"); meta != nil {
-			// fmt.Println("-----------> ", meta.Value)
 			if name := utils.ToUint(meta.Value); name == 0 {
 				return validations.NewError(record, "Organization", "Organization can't be blank")
 			}
 		}
 		if meta := metaValues.Get("Store"); meta != nil {
-			// fmt.Println("-----------> ", meta.Value)
 			if name := utils.ToUint(meta.Value); name == 0 {
 				return validations.NewError(record, "Store", "Store can't be blank")
 			}
 		}
 		if meta := metaValues.Get("Invoices"); meta != nil {
-			// fmt.Println("-----------> ", meta.Value)
+			fmt.Println("----------- Invoices ------------->", meta.Value)
 			if name := utils.ToArray(meta.Value); len(name) == 0 {
 				return validations.NewError(record, "Invoices", "Items can't be blank")
 			}

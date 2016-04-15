@@ -2,11 +2,14 @@ package models
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/qor/media_library"
 	"github.com/qor/transition"
+	"github.com/qor/validations"
+	// "github.com/qor/qor/utils"
 )
 
 type InvoiceIn struct {
@@ -22,6 +25,16 @@ type InvoiceIn struct {
 	Document       media_library.FileSystem
 	Invoices       []InvoiceInItem `json:"invoices"`
 	transition.Transition
+}
+
+func (self InvoiceIn) Validate(db *gorm.DB) {
+	if strings.TrimSpace(self.Name) == "" {
+		db.AddError(validations.NewError(self, "Name", "Name can not be empty"))
+	}
+	res := InvoiceIn{}
+	if err := db.Where(&InvoiceIn{Name: self.Name, OrganizationID: self.OrganizationID}).First(&res).Error; err == nil {
+		db.AddError(validations.NewError(self, "Name", "Name is exist"))
+	}
 }
 
 func (self *InvoiceIn) BeforeSave(tx *gorm.DB) (err error) {
