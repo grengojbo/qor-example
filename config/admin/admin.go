@@ -635,6 +635,12 @@ func init() {
 	// Add Device
 	Admin.AddResource(&models.ThermalPrinterDevice{}, &admin.Config{Menu: []string{"Devices"}})
 
+	// База соответсвия продуктов к кодам
+	Admin.AddResource(&models.ProductCode{}, &admin.Config{Menu: []string{"Site Management"}})
+
+	skeleton := Admin.AddResource(&models.ExchangeSkeleton{}, &admin.Config{Menu: []string{"Site Management"}})
+	skeleton.Meta(&admin.Meta{Name: "Format", Type: "select_one", Collection: []string{"CSV", "XLS"}})
+
 	// Units (еденицы измерения)
 	Admin.AddResource(&models.Unit{}, &admin.Config{Menu: []string{"Site Management"}})
 	Admin.AddResource(&models.Role{}, &admin.Config{Menu: []string{"Site Management"}})

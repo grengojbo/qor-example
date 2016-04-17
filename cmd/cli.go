@@ -150,6 +150,8 @@ func runMigrate(c *cli.Context) {
 	fmt.Printf("Setting, ")
 	AutoMigrate(&models.Setting{})
 
+	fmt.Printf("ExchangeSkeleton, ")
+	AutoMigrate(&models.ExchangeSkeleton{})
 	fmt.Printf("Unit, ")
 	AutoMigrate(&models.Unit{})
 	fmt.Printf("Role, ")
@@ -162,8 +164,8 @@ func runMigrate(c *cli.Context) {
 	fmt.Printf("Category, ")
 	AutoMigrate(&models.Category{})
 
-	fmt.Printf("Rfid, ")
-	AutoMigrate(&models.Rfid{})
+	// fmt.Printf("Rfid, ")
+	// AutoMigrate(&models.Rfid{})
 	fmt.Printf("Organization, ")
 	AutoMigrate(&models.Organization{})
 	fmt.Printf("User, ")
@@ -177,19 +179,22 @@ func runMigrate(c *cli.Context) {
 	fmt.Printf("Product, ")
 	AutoMigrate(&models.Product{})
 
+	fmt.Printf("ProductCode, ")
+	AutoMigrate(&models.ProductCode{})
+
 	// fmt.Printf("Car, ")
 	// AutoMigrate(&models.Car{})
 
-	fmt.Printf("CashDevice, ")
-	AutoMigrate(&models.CashDevice{})
+	// fmt.Printf("CashDevice, ")
+	// AutoMigrate(&models.CashDevice{})
 
 	// fmt.Printf("ThermalPrinterDevice, ")
 	// AutoMigrate(&models.ThermalPrinterDevice{})
 
-	fmt.Printf("Voucher, ")
-	AutoMigrate(&models.Voucher{})
-	fmt.Printf("VoucherItem, ")
-	AutoMigrate(&models.VoucherItem{})
+	// fmt.Printf("Voucher, ")
+	// AutoMigrate(&models.Voucher{})
+	// fmt.Printf("VoucherItem, ")
+	// AutoMigrate(&models.VoucherItem{})
 
 	fmt.Printf("InvoiceIn, ")
 	AutoMigrate(&models.InvoiceIn{})

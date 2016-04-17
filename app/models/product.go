@@ -152,3 +152,21 @@ func (sizeVariation SizeVariation) Stringify() string {
 	}
 	return fmt.Sprint(sizeVariation.ID)
 }
+
+type ProductCode struct {
+	gorm.Model
+	Code           string
+	ProductID      uint
+	Product        Product
+	OrganizationID uint
+	Organization   Organization
+	Checked        bool `sql:"default:false"`
+}
+
+func (self ProductCode) DisplayName() string {
+	return fmt.Sprintf("%s", self.Code)
+}
+
+func (self ProductCode) Stringify() string {
+	return fmt.Sprintf("%s", self.Code)
+}
