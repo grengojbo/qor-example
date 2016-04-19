@@ -1,4 +1,4 @@
-MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render
+MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render cache
 
 QORTHEME=activity i18n l10n location media_library publish seo serializable_meta slug sorting widget worker
 
