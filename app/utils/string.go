@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"strings"
 	"strconv"
 )
 
@@ -47,4 +48,11 @@ func RemoveDuplicates(a []uint) []uint {
 		}
 	}
 	return result
+}
+
+
+// @return float32
+func MyDecimal(str string) float32 {
+	res, _ := strconv.ParseFloat(strings.TrimSpace(str), 64)
+	return float32(res)
 }

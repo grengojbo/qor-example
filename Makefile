@@ -83,6 +83,7 @@ install:
 	@go get -v -u github.com/jinzhu/gorm/dialects/postgres
 	@go get -v -u github.com/jinzhu/gorm/dialects/sqlite
 	@go get -v -u github.com/smartystreets/goconvey/convey
+	@go get -v -u github.com/shopspring/decimal
 	@#go get -v -u
 
 qor:
