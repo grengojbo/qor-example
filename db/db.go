@@ -9,8 +9,8 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	"github.com/qor/i18n"
-	"github.com/qor/i18n/backends/database"
+	// "github.com/qor/i18n"
+
 	"github.com/qor/l10n"
 	"github.com/qor/media_library"
 	"github.com/qor/publish"
@@ -52,7 +52,7 @@ func init() {
 			DB.LogMode(config.Config.DB.Debug)
 		}
 		Publish = publish.New(DB)
-		config.Config.I18n = i18n.New(database.New(DB))
+		// config.Config.I18n = i18n.New(database.New(DB))
 
 		l10n.Global = config.Config.Locale
 		l10n.RegisterCallbacks(DB)

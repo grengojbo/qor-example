@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin"
+	_ "github.com/qor/qor-example/config/i18n"
 	"github.com/qor/qor-example/config/routes"
 	"github.com/qor/qor-example/db/migrations"
 )

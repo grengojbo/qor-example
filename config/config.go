@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/jinzhu/configor"
-	"github.com/qor/i18n"
+	// "github.com/qor/i18n"
 	"github.com/qor/render"
 )
 
@@ -39,7 +39,7 @@ var Config = struct {
 		Name    string `default:"sessionid"`
 		Adapter string `default:"cookie"`
 	}
-	I18n           *i18n.I18n
+	// I18n           *i18n.I18n
 	Locale         string `default:"en-US"`
 	Secret         string `default:"secret"`
 	Limit          int    `default:"5"`
@@ -65,5 +65,6 @@ func init() {
 	if err := configor.Load(&Config, FileConfig); err != nil {
 		panic(err)
 	}
+
 	View = render.New()
 }

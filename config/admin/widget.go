@@ -2,6 +2,7 @@ package admin
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/qor/admin"
 	"github.com/qor/media_library"
@@ -15,6 +16,17 @@ var Widgets *widget.Widgets
 
 func init() {
 	Widgets = widget.New(&widget.Config{DB: db.DB})
+	Widgets.RegisterScope(&widget.Scope{
+		Name: "From Google",
+		Visible: func(context *widget.Context) bool {
+			if request, ok := context.Get("Request"); ok {
+				_, ok := request.(*http.Request).URL.Query()["from_google"]
+				return ok
+			}
+			return false
+		},
+	})
+
 	Admin.AddResource(Widgets)
 
 	// Top Banner
@@ -27,9 +39,9 @@ func init() {
 	}
 
 	Widgets.RegisterWidget(&widget.Widget{
-		Name:     "Banner",
-		Template: "banner",
-		Setting:  Admin.NewResource(&bannerArgument{}),
+		Name:      "Banner",
+		Templates: []string{"banner", "banner2"},
+		Setting:   Admin.NewResource(&bannerArgument{}),
 		Context: func(context *widget.Context, setting interface{}) *widget.Context {
 			context.Options["Setting"] = setting
 			return context
@@ -51,9 +63,9 @@ func init() {
 		return collectionValues
 	}})
 	Widgets.RegisterWidget(&widget.Widget{
-		Name:     "Products",
-		Template: "products",
-		Setting:  selectedProductsResource,
+		Name:      "Products",
+		Templates: []string{"products"},
+		Setting:   selectedProductsResource,
 		Context: func(context *widget.Context, setting interface{}) *widget.Context {
 			if setting != nil {
 				var products []*models.Product

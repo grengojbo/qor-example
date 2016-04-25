@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/qor/i18n/inline_edit"
 	"github.com/qor/qor-example/app/models"
 	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin"
+	"github.com/qor/qor-example/config/i18n"
 	"github.com/qor/qor-example/db"
 	"github.com/qor/seo"
-
 	"github.com/qor/widget"
 )
 
@@ -17,13 +18,15 @@ func HomeIndex(ctx *gin.Context) {
 	seoObj := models.SEOSetting{}
 	db.DB.First(&seoObj)
 
-	widgetContext := widget.NewContext(map[string]interface{}{})
-	config.View.Execute(
+	widgetContext := widget.NewContext(map[string]interface{}{"Request": ctx.Request})
+	i18nFuncMap := inline_edit.GenerateFuncMaps(i18n.I18n, "en-US", nil)
+
+	config.View.Funcs(i18nFuncMap).Execute(
 		"home_index",
 		gin.H{
 			"SeoTag":           seoObj.HomePage.Render(seoObj, nil),
-			"top_banner":       admin.Widgets.Render("TopBanner", widgetContext, "Banner"),
-			"feature_products": admin.Widgets.Render("FeatureProducts", widgetContext, "Products"),
+			"top_banner":       admin.Widgets.Render("Banner", "TopBanner", widgetContext),
+			"feature_products": admin.Widgets.Render("Products", "FeatureProducts", widgetContext),
 			"Products":         products,
 			"MicroSearch": seo.MicroSearch{
 				URL:    "http://demo.getqor.com",
