@@ -2,7 +2,6 @@ package routes
 
 import (
 	"fmt"
-	"html/template"
 	"time"
 	// "net/http"
 	// "strings"
@@ -47,12 +46,12 @@ func Router() *gin.Engine {
 	}
 
 	tmplPath := fmt.Sprintf("%v/app/views/*.tmpl", config.Root)
-	// r.LoadHTMLGlob(tmplPath)
-	if tmpl, err := template.New("projectViews").Funcs(config.FuncMap).ParseGlob(tmplPath); err == nil {
-		router.SetHTMLTemplate(tmpl)
-	} else {
-		panic(err)
-	}
+	router.LoadHTMLGlob(tmplPath)
+	// if tmpl, err := template.New("projectViews").Funcs(config.FuncMap).ParseGlob(tmplPath); err == nil {
+	// 	router.SetHTMLTemplate(tmpl)
+	// } else {
+	// 	panic(err)
+	// }
 	router.GET("/", controllers.HomeIndex)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
