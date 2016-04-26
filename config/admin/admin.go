@@ -83,6 +83,18 @@ func init() {
 		"ColorVariations",
 	)
 
+	for _, cat := range models.GetAllCategory() {
+		var cat = cat
+		product.Scope(&admin.Scope{
+			Name:  fmt.Sprint(cat.ID),
+			Label: cat.Name,
+			Group: "Category",
+			Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+				return db.Where("category_id = ?", cat.ID)
+			},
+		})
+	}
+
 	for _, country := range Countries {
 		var country = country
 		product.Scope(&admin.Scope{Name: country, Group: "Made Country", Handle: func(db *gorm.DB, ctx *qor.Context) *gorm.DB {
