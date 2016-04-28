@@ -23,7 +23,7 @@ var (
 	BuildTime = "2015-09-20 UTC"
 	GitHash   = "c00"
 	// Admin     *admin.Admin
-	Tables = []string{"Unit", "Role", "Languages", "Category", "Setting"}
+	Tables = []string{"StateChangeLog", "Unit", "Role", "Languages", "Category", "Setting"}
 )
 
 var Commands = []cli.Command{
@@ -145,7 +145,8 @@ func runFeature(c *cli.Context) {
 func runMigrate(c *cli.Context) {
 	fmt.Println("Start Migration ...")
 	// fmt.Printf(", ")
-	AutoMigrate(&media_library.AssetManager{})
+	fmt.Printf("AssetManager, StateChangeLog, ")
+	AutoMigrate(&media_library.AssetManager{}, &transition.StateChangeLog{})
 
 	fmt.Printf("Setting, ")
 	AutoMigrate(&models.Setting{})
