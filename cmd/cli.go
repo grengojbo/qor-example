@@ -16,6 +16,7 @@ import (
 	"github.com/qor/qor-example/db"
 	// "github.com/qor/qor-example/db/feature"
 	"github.com/qor/qor-example/db/seeds"
+	"github.com/qor/transition"
 )
 
 var (
