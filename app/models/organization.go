@@ -4,7 +4,13 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/qor/location"
 	"github.com/qor/media_library"
+	"github.com/qor/qor-example/db"
 )
+
+type OrganizationApi struct {
+	ID   uint   `json:"id"`
+	Name string `json:"name"`
+}
 
 type Organization struct {
 	gorm.Model
@@ -27,4 +33,21 @@ type Organization struct {
 
 func (organization Organization) DisplayName() string {
 	return organization.Name
+}
+
+func ListOrganization() (res []OrganizationApi) {
+	self := []Organization{}
+	api := []OrganizationApi{}
+	if err := db.DB.Where(&Organization{Enabled: true}).Find(&self).Error; err != nil {
+		return api
+	}
+	for _, row := range self {
+		item := OrganizationApi{
+			ID:   row.ID,
+			Name: row.Name,
+		}
+		api = append(api, item)
+	}
+	return api
+
 }
