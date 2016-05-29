@@ -9,6 +9,7 @@ import (
 	"github.com/qor/qor"
 	"github.com/qor/qor-example/app/models"
 	"github.com/qor/qor-example/db"
+	"github.com/qor/sorting"
 	"github.com/qor/widget"
 )
 
@@ -50,7 +51,8 @@ func init() {
 
 	// selected Products
 	type selectedProductsArgument struct {
-		Products []string
+		Products       []string
+		ProductsSorter sorting.SortableCollection
 	}
 	selectedProductsResource := Admin.NewResource(&selectedProductsArgument{})
 	selectedProductsResource.Meta(&admin.Meta{Name: "Products", Type: "select_many", Collection: func(value interface{}, context *qor.Context) [][]string {
@@ -70,6 +72,7 @@ func init() {
 			if setting != nil {
 				var products []*models.Product
 				db.DB.Limit(9).Preload("ColorVariations").Preload("ColorVariations.Images").Where("id IN (?)", setting.(*selectedProductsArgument).Products).Find(&products)
+				setting.(*selectedProductsArgument).ProductsSorter.Sort(&products)
 				context.Options["Products"] = products
 			}
 			return context

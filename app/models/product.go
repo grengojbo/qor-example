@@ -32,26 +32,23 @@ type ProductApi struct {
 
 type Product struct {
 	gorm.Model
-	l10n.Locale         `json:"-"`
-	publish.Status      `json:"-"`
-	sorting.SortingDESC `json:"-"`
+	l10n.Locale
+	publish.Status
+	sorting.SortingDESC
 
-	Name            string           `json:"name"`
-	NameSmall       string           `sql:"type:varchar(75)" json:"name_small"`
-	NameWithSlug    slug.Slug        `l10n:"sync" json:"slug"`
-	Code            string           `l10n:"sync" json:"code"`
-	CategoryID      uint             `l10n:"sync" json:"categoryID"`
-	Category        Category         `l10n:"sync" json:"-"`
-	Collections     []Collection     `l10n:"sync" gorm:"many2many:product_collections"`
-	MadeCountry     string           `l10n:"sync" json:"country"`
-	UnitID          uint             `l10n:"sync"`
-	Unit            Unit             `l10n:"sync"`
-	Price           float32          `l10n:"sync" json:"price"`
-	Description     string           `sql:"size:2000" json:"description"`
-	ColorVariations []ColorVariation `l10n:"sync"`
-	Enabled         bool             `sql:"default:false" json:"-"`
-	Picture         media_library.FileSystem
-	Image           VarioationImageStorage `sql:"type:varchar(4096)"`
+	Name                  string
+	NameWithSlug          slug.Slug    `l10n:"sync"`
+	Code                  string       `l10n:"sync"`
+	CategoryID            uint         `l10n:"sync"`
+	Category              Category     `l10n:"sync"`
+	Collections           []Collection `l10n:"sync" gorm:"many2many:product_collections;ForeignKey:id;AssociationForeignKey:id"`
+	CollectionsSorter     sorting.SortableCollection
+	MadeCountry           string           `l10n:"sync"`
+	Price                 float32          `l10n:"sync"`
+	Description           string           `sql:"size:2000"`
+	ColorVariations       []ColorVariation `l10n:"sync"`
+	ColorVariationsSorter sorting.SortableCollection
+	Enabled               bool
 }
 
 func (product Product) DefaultPath() string {

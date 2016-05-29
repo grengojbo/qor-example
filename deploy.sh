@@ -18,5 +18,3 @@
 # echo "Building main seeds..."
 # #GOOS=linux GOARCH=amd64 go build -o db/seeds/main db/seeds/main.go
 
-# echo "Deploying..."
-# #harp -s $env -log deploy

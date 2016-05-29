@@ -52,7 +52,7 @@ func Router() *gin.Engine {
 	// } else {
 	// 	panic(err)
 	// }
-	// router.GET("/", controllers.HomeIndex)
+	router.GET("/", controllers.HomeIndex)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
 	router.GET("/login", controllers.LoginForm)
