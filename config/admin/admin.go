@@ -13,7 +13,8 @@ import (
 	"github.com/qor/media_library"
 	"github.com/qor/qor"
 	"github.com/qor/qor-example/app/models"
-	"github.com/qor/qor-example/config"
+	"github.com/qor/qor-example/config/admin/bindatafs"
+	"github.com/qor/qor-example/config/i18n"
 	"github.com/qor/qor-example/db"
 	"github.com/qor/qor/resource"
 	"github.com/qor/qor/utils"
@@ -28,6 +29,7 @@ func init() {
 	Admin = admin.New(&qor.Config{DB: db.Publish.DraftDB()})
 	Admin.SetSiteName("Qor DEMO")
 	Admin.SetAuth(Auth{})
+	Admin.SetAssetFS(bindatafs.AssetFS)
 
 	// Add Dashboard
 	Admin.AddMenu(&admin.Menu{Name: "Dashboard", Link: "/admin"})
@@ -68,7 +70,8 @@ func init() {
 		&admin.Section{
 			Title: "Organization",
 			Rows: [][]string{
-				{"Category", "Collections", "MadeCountry"},
+				{"Category", "MadeCountry"},
+				{"Collections"},
 			}},
 		"Description",
 		"ColorVariations",
@@ -293,7 +296,7 @@ func init() {
 	})
 
 	// Add Translations
-	Admin.AddResource(config.Config.I18n, &admin.Config{Menu: []string{"Site Management"}})
+	Admin.AddResource(i18n.I18n, &admin.Config{Menu: []string{"Site Management"}})
 
 	// Add SEOSetting
 	Admin.AddResource(&models.SEOSetting{}, &admin.Config{Menu: []string{"Site Management"}, Singleton: true})
@@ -318,13 +321,15 @@ func init() {
 	)
 	user.EditAttrs(user.ShowAttrs())
 
-	// Add Publish
-	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
-
 	// Add Worker
 	Worker := getWorker()
 	Admin.AddResource(Worker)
-	exchange_actions.RegisterExchangeJobs(config.Config.I18n, Worker)
+
+	db.Publish.SetWorker(Worker)
+	exchange_actions.RegisterExchangeJobs(i18n.I18n, Worker)
+
+	// Add Publish
+	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
 
 	// Add Search Center Resources
 	Admin.AddSearchResource(product, user, order)
