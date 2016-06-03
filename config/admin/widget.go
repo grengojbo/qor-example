@@ -40,13 +40,37 @@ func init() {
 	}
 
 	Widgets.RegisterWidget(&widget.Widget{
-		Name:      "Banner",
+		Name:      "NormalBanner",
 		Templates: []string{"banner", "banner2"},
 		Setting:   Admin.NewResource(&bannerArgument{}),
 		Context: func(context *widget.Context, setting interface{}) *widget.Context {
 			context.Options["Setting"] = setting
 			return context
 		},
+	})
+
+	type slideImage struct {
+		Title string
+		Image media_library.FileSystem
+	}
+
+	type slideShowArgument struct {
+		SlideImages []slideImage
+	}
+
+	Widgets.RegisterWidget(&widget.Widget{
+		Name:      "SlideShow",
+		Templates: []string{"slideshow"},
+		Setting:   Admin.NewResource(&slideShowArgument{}),
+		Context: func(context *widget.Context, setting interface{}) *widget.Context {
+			context.Options["Setting"] = setting
+			return context
+		},
+	})
+
+	Widgets.RegisterWidgetsGroup(&widget.WidgetsGroup{
+		Name:    "Banner",
+		Widgets: []string{"NormalBanner", "SlideShow"},
 	})
 
 	// selected Products
