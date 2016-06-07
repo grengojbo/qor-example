@@ -39,26 +39,32 @@ func Router() *gin.Engine {
 		router.Use(sessions.Sessions(conf.Session.Name, store))
 	}
 
-	// for _, path := range []string{"static", "downloads"} {
-	// for _, path := range []string{"css", "fonts", "static", "images", "javascripts", "js", "system", "downloads"} {
-	for _, path := range []string{"dist", "fonts", "vendors", "images", "static", "downloads"} {
+	// 	var mux = http.NewServeMux()
+	// 	mux.Handle("/", router)
+	// 	mux.Handle("/auth/", auth.Auth.NewRouter())
+	// 	publicDir := http.Dir(strings.Join([]string{config.Root, "public"}, "/"))
+	// 	mux.Handle("/dist/", http.FileServer(publicDir))
+	// 	mux.Handle("/vendors/", http.FileServer(publicDir))
+	// 	mux.Handle("/images/", http.FileServer(publicDir))
+	// 	mux.Handle("/fonts/", http.FileServer(publicDir))
+
+	for _, path := range []string{"dist", "vendors", "images", "fonts", "static", "downloads"} {
 		router.Static(fmt.Sprintf("/%s", path), fmt.Sprintf("public/%s", path))
 	}
 
-	tmplPath := fmt.Sprintf("%v/app/views/*.tmpl", config.Root)
-	router.LoadHTMLGlob(tmplPath)
-	// if tmpl, err := template.New("projectViews").Funcs(config.FuncMap).ParseGlob(tmplPath); err == nil {
-	// 	router.SetHTMLTemplate(tmpl)
-	// } else {
-	// 	panic(err)
-	// }
+	// tmplPath := fmt.Sprintf("%v/app/views/*.tmpl", config.Root)
+	// router.LoadHTMLGlob(tmplPath)
+
 	router.GET("/", controllers.HomeIndex)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
 	router.GET("/login", controllers.LoginForm)
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", controllers.Logout)
-	router.GET("/auth", controllers.LoginJWT)
+
+	// router.GET("/auth", controllers.LoginJWT)
+	router.GET("/auth", auth.Auth.NewRouter())
+
 	// router.HandleFunc("/guitars/{id:[0-9]+}", h.guitarsShowHandler).Methods("GET")
 
 	// API version 1
@@ -84,4 +90,6 @@ func Router() *gin.Engine {
 	// })
 
 	return router
+
+	// 	return mux
 }

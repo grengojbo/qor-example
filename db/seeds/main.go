@@ -64,6 +64,9 @@ func createRecords() {
 	createSeo()
 	fmt.Println("--> Created seo.")
 
+	createAdminUsers()
+	fmt.Println("--> Created admin users.")
+
 	createUsers()
 	fmt.Println("--> Created users.")
 	createAddresses()
@@ -114,20 +117,22 @@ func createSetting() {
 func createSeo() {
 	seoSetting := models.SEOSetting{}
 	seoSetting.SiteName = Seeds.Seo.SiteName
-	seoSetting.DefaultPage = seo.Setting{Title: Seeds.Seo.DefaultPage.Title, Description: Seeds.Seo.DefaultPage.Description}
-	seoSetting.HomePage = seo.Setting{Title: Seeds.Seo.HomePage.Title, Description: Seeds.Seo.HomePage.Description}
-	seoSetting.ProductPage = seo.Setting{Title: Seeds.Seo.ProductPage.Title, Description: Seeds.Seo.ProductPage.Description}
+	seoSetting.DefaultPage = seo.Setting{Title: Seeds.Seo.DefaultPage.Title, Description: Seeds.Seo.DefaultPage.Description, Keywords: Seeds.Seo.DefaultPage.Keywords}
+	seoSetting.HomePage = seo.Setting{Title: Seeds.Seo.HomePage.Title, Description: Seeds.Seo.HomePage.Description, Keywords: Seeds.Seo.HomePage.Keywords}
+	seoSetting.ProductPage = seo.Setting{Title: Seeds.Seo.ProductPage.Title, Description: Seeds.Seo.ProductPage.Description, Keywords: Seeds.Seo.ProductPage.Keywords}
 
 	if err := db.DB.Create(&seoSetting).Error; err != nil {
 		log.Fatalf("create seo (%v) failure, got err %v", seoSetting, err)
 	}
 }
 
-func createAdminUser() {
+func createAdminUsers() {
 	user := models.User{}
-	user.Email = "admin@example.com"
-	user.Name = "admin"
-	user.Password = "$2a$10$SXinmKBnwhRcB4EJLlTO2.OebRd0Tv8TzvFMLJ6XNiJeB0//SolS."
+	user.Email = "dev@getqor.com"
+	user.Password = "$2a$10$a8AXd1q6J1lL.JQZfzXUY.pznG1tms8o.PK.tYD.Tkdfc3q7UrNX." // Password: testing
+	// user.Password = "$2a$10$SXinmKBnwhRcB4EJLlTO2.OebRd0Tv8TzvFMLJ6XNiJeB0//SolS."
+	user.Confirmed = true
+	user.Name = "QOR Admin"
 	user.Gender = "Male"
 	user.CreatedAt = time.Now()
 	user.Role = "admin"
@@ -365,7 +370,8 @@ func createWidgets() {
 	type ImageStorage struct{ media_library.FileSystem }
 	topBannerSetting := widget.QorWidgetSetting{}
 	topBannerSetting.Name = "TopBanner"
-	topBannerSetting.Kind = "Banner"
+	topBannerSetting.Kind = "NormalBanner"
+	topBannerSetting.GroupName = "Banner"
 	topBannerValue := &struct {
 		Title           string
 		ButtonTitle     string
@@ -467,8 +473,7 @@ func openFileByURL(rawURL string) (*os.File, error) {
 		segments := strings.Split(path, "/")
 		fileName := segments[len(segments)-1]
 
-		basePath, _ := filepath.Abs(".")
-		filePath := fmt.Sprintf("%s/tmp/%s", basePath, fileName)
+		filePath := filepath.Join("/tmp", fileName)
 
 		if _, err := os.Stat(filePath); err == nil {
 			return os.Open(filePath)

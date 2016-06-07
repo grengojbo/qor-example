@@ -51,3 +51,5 @@ public/assets/
 *.js.map
 *.css.map
 npm-debug.log
+
+config/*.yml

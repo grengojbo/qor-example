@@ -1,4 +1,4 @@
-MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render cache
+MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render cache bindatafs action_bar
 
 QORTHEME=activity i18n l10n location media_library publish seo serializable_meta slug sorting widget worker
 
@@ -85,6 +85,7 @@ install:
 	@go get -v -u github.com/smartystreets/goconvey/convey
 	@go get -v -u github.com/shopspring/decimal
 	@go get -v -u github.com/tealeg/xlsx
+	@go get -v -u github.com/justinas/nosurf
 	@#go get -v -u
 
 qor:

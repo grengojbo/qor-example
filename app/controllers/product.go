@@ -12,6 +12,7 @@ import (
 	"github.com/qor/i18n/inline_edit"
 	"github.com/qor/qor-example/app/models"
 	"github.com/qor/qor-example/config"
+	"github.com/qor/qor-example/config/admin"
 	"github.com/qor/qor-example/config/i18n"
 	"github.com/qor/qor-example/db"
 	"github.com/qor/seo"
@@ -112,9 +113,10 @@ func ProductShow(ctx *gin.Context) {
 	db.DB.Preload("Images").Preload("Product").Preload("Color").Preload("SizeVariations.Size").Where(&models.ColorVariation{ProductID: product.ID, ColorCode: colorCode}).First(&colorVariation)
 	db.DB.First(&seoSetting)
 
-	config.View.Funcs(funcsMap()).Execute(
+	config.View.Funcs(funcsMap(ctx)).Execute(
 		"product_show",
 		gin.H{
+			"ActionBarTag":   admin.ActionBar.Render(ctx.Writer, ctx.Request),
 			"Product":        product,
 			"ColorVariation": colorVariation,
 			"SeoTag":         seoSetting.ProductPage.Render(seoSetting, product),
@@ -126,13 +128,14 @@ func ProductShow(ctx *gin.Context) {
 				Price:       float64(product.Price),
 				Image:       colorVariation.MainImageUrl(),
 			}.Render(),
+			"CurrentUser": CurrentUser(ctx),
 		},
 		ctx.Request,
 		ctx.Writer,
 	)
 }
 
-func funcsMap() template.FuncMap {
+func funcsMap(ctx *gin.Context) template.FuncMap {
 	funcMaps := map[string]interface{}{
 		"related_products": func(cv models.ColorVariation) []models.Product {
 			var products []models.Product
@@ -146,7 +149,7 @@ func funcsMap() template.FuncMap {
 		},
 	}
 
-	for key, value := range inline_edit.FuncMap(i18n.I18n, "en-US", true) {
+	for key, value := range inline_edit.FuncMap(i18n.I18n, "en-US", isEditMode(ctx)) {
 		funcMaps[key] = value
 	}
 	return funcMaps

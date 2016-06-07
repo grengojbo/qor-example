@@ -2,6 +2,7 @@ package models
 
 import (
 	"log"
+	"time"
 
 	"github.com/jinzhu/gorm"
 	"github.com/qor/media_library"
@@ -34,13 +35,19 @@ type User struct {
 	Comment         string
 	Enabled         bool `sql:"default:false" json:"-"`
 	Avatar          media_library.FileSystem
-	// Role      Role
+
+	// Confirm
+	ConfirmToken string
+	Confirmed    bool
+
+	// Recover
+	RecoverToken       string
+	RecoverTokenExpiry time.Time
+
 	// Email     []Email
 	// Phone     []Phone
 	// Social    []Social
-	// Role      string
 	// Location  string
-	// IsActive        bool   `sql:"default:false" gorm:"column:is_active" json:"active"`
 }
 
 // func (user User) TableName() string {

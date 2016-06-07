@@ -9,6 +9,14 @@ import (
 	"github.com/qor/render"
 )
 
+type SMTPConfig struct {
+	Host     string
+	Port     string
+	User     string
+	Password string
+	Site     string
+}
+
 var Config = struct {
 	SiteName  string `default:"Qor DEMO"`
 	ApiUrl    string `default:"http://localhost:7000/api/"`
@@ -25,7 +33,8 @@ var Config = struct {
 		Port     uint   `default:"3306"`
 		Debug    bool   `default:"false"`
 	}
-	Log struct {
+	SMTP SMTPConfig
+	Log  struct {
 		FileName string
 		Maxdays  int `default:"30"`
 	}
