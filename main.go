@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin"
+	// "github.com/qor/qor-example/config/auth"
 	_ "github.com/qor/qor-example/config/i18n"
 	"github.com/qor/qor-example/config/routes"
 	"github.com/qor/qor-example/db/migrations"
@@ -34,6 +35,7 @@ func main() {
 
 	mux := http.NewServeMux()
 	// mux.Handle("/", routes.Router())
+	// mux.Handle("/auth/", auth.Auth.NewRouter())
 	admin.Admin.MountTo("/admin", mux)
 	// api.API.MountTo("/api", mux)
 

@@ -12,6 +12,7 @@ import (
 	"github.com/itsjamie/gin-cors"
 	"github.com/qor/qor-example/app/controllers"
 	"github.com/qor/qor-example/config"
+	// "github.com/qor/qor-example/config/auth"
 )
 
 func Router() *gin.Engine {
@@ -63,7 +64,7 @@ func Router() *gin.Engine {
 	// router.GET("/logout", controllers.Logout)
 
 	// router.GET("/auth", controllers.LoginJWT)
-	router.GET("/auth", auth.Auth.NewRouter())
+	// router.GET("/auth", auth.Auth.NewRouter())
 
 	// router.HandleFunc("/guitars/{id:[0-9]+}", h.guitarsShowHandler).Methods("GET")
 
@@ -76,8 +77,8 @@ func Router() *gin.Engine {
 	v1.GET("/balances", controllers.BalanceApiIndex)
 	v1.POST("/balances", controllers.BalanceNewApi)
 	v1.GET("/orders", controllers.OrderIndex)
-	v1.POST("/auth", controllers.LoginApi)
-	v1.DELETE("/auth/:id", controllers.LogoutApi)
+	// v1.POST("/auth", controllers.LoginApi)
+	// v1.DELETE("/auth/:id", controllers.LogoutApi)
 
 	// API version 2 support JWT
 	v2 := router.Group("api/v2")
