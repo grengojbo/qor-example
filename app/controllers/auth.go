@@ -24,8 +24,8 @@ func LoginForm(ctx *gin.Context) {
 	session.Set("ip", ctx.ClientIP())
 	session.Save()
 	// ctx.HTML(200, "login.tmpl", gin.H{
-	config.View.Funcs(I18nFuncMap(ctx)).Execute(
-		"login",
+	config.View.Layout("main").Funcs(I18nFuncMap(ctx)).Execute(
+		"login_jbo",
 		gin.H{
 			"title":     config.Config.SiteName,
 			"timestamp": time.Now().Unix(),

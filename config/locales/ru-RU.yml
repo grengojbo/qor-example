@@ -1,4 +1,4 @@
-en-US:
+ru-RU:
   layout:
     connect: 'CONNECT'
     about_qor: '<p>QOR is Open Source software brought to you by <a href="https://theplant.jp/">The Plant</a> under an MIT license.</p><p>The name “QOR” is a trademark of The Plant and <a href="https://theplant.jp/">subject to trademark restrictions</a>.</p>'
@@ -32,10 +32,10 @@ en-US:
       get_newsletter_info: "Be the first to get new product infos, monthly newsletter exclusive deals and discounts!"
   login:
     email: "Email:"
-    password: "Password:"
+    password: "Пароль:"
     remember_me: "Remember"
     forget_password: "Forget Password"
-    button: "Login"
+    button: "Вход"
     register: "Register"
     error: "Неправильный логин или пароль"
   register:
