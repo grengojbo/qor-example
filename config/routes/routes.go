@@ -59,9 +59,9 @@ func Router() *gin.Engine {
 	router.GET("/", controllers.HomeIndex)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
-	// router.GET("/login", controllers.LoginForm)
-	// router.POST("/login", controllers.Login)
-	// router.GET("/logout", controllers.Logout)
+	router.GET("/login", controllers.LoginForm)
+	router.POST("/login", controllers.Login)
+	router.GET("/logout", controllers.Logout)
 
 	// router.GET("/auth", controllers.LoginJWT)
 	// router.GET("/auth", auth.Auth.NewRouter())
@@ -77,8 +77,8 @@ func Router() *gin.Engine {
 	v1.GET("/balances", controllers.BalanceApiIndex)
 	v1.POST("/balances", controllers.BalanceNewApi)
 	v1.GET("/orders", controllers.OrderIndex)
-	// v1.POST("/auth", controllers.LoginApi)
-	// v1.DELETE("/auth/:id", controllers.LogoutApi)
+	v1.POST("/auth", controllers.LoginApi)
+	v1.DELETE("/auth/:id", controllers.LogoutApi)
 
 	// API version 2 support JWT
 	v2 := router.Group("api/v2")

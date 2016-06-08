@@ -24,6 +24,7 @@ var Config = struct {
 	Migration bool   `default:"true"`
 	Env       string `env:"ENV" default:"local"`
 	Port      uint   `default:"7000" env:"PORT"`
+	Allow     string `default:"any"`
 	DB        struct {
 		Name     string `default:"qor_example"`
 		Adapter  string `default:"mysql"`

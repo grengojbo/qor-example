@@ -38,7 +38,7 @@ func init() {
 	Admin = admin.New(&qor.Config{DB: db.Publish.DraftDB()})
 	Admin.SetSiteName(config.Config.SiteName)
 
-	// Admin.SetAuth(Auth{})
+	Admin.SetAuth(Auth{})
 	Admin.SetAssetFS(bindatafs.AssetFS)
 
 	// Add Dashboard
