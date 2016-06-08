@@ -58,9 +58,9 @@ func Router() *gin.Engine {
 	router.GET("/", controllers.HomeIndex)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
-	router.GET("/login", controllers.LoginForm)
-	router.POST("/login", controllers.Login)
-	router.GET("/logout", controllers.Logout)
+	// router.GET("/login", controllers.LoginForm)
+	// router.POST("/login", controllers.Login)
+	// router.GET("/logout", controllers.Logout)
 
 	// router.GET("/auth", controllers.LoginJWT)
 	router.GET("/auth", auth.Auth.NewRouter())

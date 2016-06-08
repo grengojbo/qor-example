@@ -57,7 +57,8 @@ var Config = struct {
 
 var (
 	Root       = os.Getenv("GOPATH") + "/src/github.com/qor/qor-example"
-	FileConfig = os.Getenv("GOPATH") + "/config/database.yml"
+	FileConfig = os.Getenv("QORROOT") + "/config/database.yml"
+	FileSMTP   = os.Getenv("QORROOT") + "/config/smtp.yml"
 	View       *render.Render
 )
 
@@ -67,13 +68,21 @@ func init() {
 		FileConfig = file
 		log.Printf("Set config file: %s\n", FileConfig)
 	}
+	if file := os.Getenv("QORSMTP"); len(file) > 0 {
+		FileSMTP = file
+		log.Printf("Set config file: %s\n", FileSMTP)
+	}
 	if rootPath := os.Getenv("QORROOT"); len(rootPath) > 0 {
 		Root = rootPath
 		log.Printf("Set ROOT path: %s\n", FileConfig)
 	}
-	if err := configor.Load(&Config, FileConfig); err != nil {
+	if err := configor.Load(&Config, FileConfig, FileSMTP); err != nil {
 		panic(err)
 	}
 
 	View = render.New()
+}
+
+func (s SMTPConfig) HostWithPort() string {
+	return s.Host + ":" + s.Port
 }
