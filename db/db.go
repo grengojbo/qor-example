@@ -3,6 +3,7 @@ package db
 import (
 	"errors"
 	"fmt"
+	"os"
 
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -32,8 +33,10 @@ func init() {
 	}
 
 	if err == nil {
-		// DB.LogMode(true)
-		Publish = publish.New(DB)
+		if os.Getenv("DEBUG") != "" {
+			DB.LogMode(true)
+		}
+		Publish = publish.New(DB.Set("l10n:mode", "unscoped"))
 
 		l10n.RegisterCallbacks(DB)
 		sorting.RegisterCallbacks(DB)
