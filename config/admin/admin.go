@@ -39,6 +39,8 @@ func init() {
 	Admin.SetSiteName(config.Config.SiteName)
 
 	Admin.SetAuth(Auth{})
+
+	// Admin.SetAuth(auth.AdminAuth{})
 	Admin.SetAssetFS(bindatafs.AssetFS)
 
 	// Add Dashboard

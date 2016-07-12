@@ -57,6 +57,7 @@ func Router() *gin.Engine {
 	// router.LoadHTMLGlob(tmplPath)
 
 	router.GET("/", controllers.HomeIndex)
+	// router.GET("/dashboard", controllers.Dashboard)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
 	router.GET("/login", controllers.LoginForm)

@@ -30,7 +30,20 @@ func init() {
 		},
 	})
 
-	Admin.AddResource(Widgets)
+	type WidgetArgument struct {
+		Title string
+	}
+
+	Widgets.RegisterWidget(&widget.Widget{
+		Name:      "Jbo",
+		Templates: []string{"jbo"},
+		Setting:   Admin.NewResource(&WidgetArgument{}),
+		Context: func(context *widget.Context, setting interface{}) *widget.Context {
+			// context.Options["Setting"] = setting
+			context.Options["JboText"] = "sadfsdfgdsfgdsfgdfgh"
+			return context
+		},
+	})
 
 	// Top Banner
 	type bannerArgument struct {
@@ -115,4 +128,21 @@ func init() {
 			return context
 		},
 	})
+
+	// widgetContext := widget.NewContext(map[string]interface{}{
+	// 	"CurrentUser": "Qortex",
+	// })
+	// html := Widgets.Render("Jbo", "Jbo", nil)
+
+	Admin.AddResource(Widgets)
+
+	// Admin.RegisterFuncMap("test_banner", html)
+	// context := &admin.Context{Admin: Admin}
+	// widgetContext := widget.NewContext(map[string]interface{}{"Request": &admin.Context.Request})
+	// Admin.NewContext(map[string]interface{}{
+	// 	"Jbo": "Qortex",
+	// })
+	// Admin.RegisterFuncMap("test_banner", Widgets.Render("HomeBanner", "Banner", widgetContext))
+	// Admin.Dashboard.Execute("dashboard", map[string]interface{}{"test_banner": Widgets.Render("HomeBanner", "Banner", nil)})
+
 }
