@@ -66,14 +66,14 @@ save:
 	@godep save
 
 install:
-	@go get -v -u github.com/constabulary/gb/...
-	@go get -v -u github.com/kr/godep
+	@#go get -v -u github.com/constabulary/gb/...
+	@#go get -v -u github.com/kr/godep
 	@go get -v -u github.com/dgrijalva/jwt-go
 	@go get -v -u github.com/antonholmquist/jason
 	@go get -v -u github.com/go-resty/resty
 	@go get -v -u github.com/gin-gonic/gin
 	@go get -v -u github.com/itsjamie/gin-cors
-	@go get -v -u github.com/gin-gonic/contrib/jwt
+	@#go get -v -u github.com/gin-gonic/contrib/jwt
 	@go get -v -u github.com/codegangsta/cli
 	@go get -v -u github.com/azumads/faker
 	@go get -v -u github.com/jteeuwen/go-bindata/...
@@ -86,6 +86,7 @@ install:
 	@go get -v -u github.com/shopspring/decimal
 	@go get -v -u github.com/tealeg/xlsx
 	@go get -v -u github.com/justinas/nosurf
+	@go get -v -u github.com/asaskevich/govalidator
 	@#go get -v -u
 
 qor:

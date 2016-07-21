@@ -12,6 +12,7 @@ import (
 	"github.com/qor/activity"
 	"github.com/qor/admin"
 	"github.com/qor/i18n/exchange_actions"
+	"github.com/qor/l10n/publish"
 	"github.com/qor/media_library"
 	"github.com/qor/qor"
 	"github.com/qor/qor-example/app/models"
@@ -35,12 +36,9 @@ var Countries = []string{"Ukraine", "Russian", "USA"}
 // var Genders = []string{"Male", "Famele"}
 
 func init() {
-	Admin = admin.New(&qor.Config{DB: db.Publish.DraftDB()})
+	Admin = admin.New(&qor.Config{DB: db.DB.Set("publish:draft_mode", true)})
 	Admin.SetSiteName(config.Config.SiteName)
-
-	Admin.SetAuth(Auth{})
-
-	// Admin.SetAuth(auth.AdminAuth{})
+	Admin.SetAuth(auth.AdminAuth{})
 	Admin.SetAssetFS(bindatafs.AssetFS)
 
 	// Add Dashboard
@@ -51,10 +49,9 @@ func init() {
 
 	// Add Product
 	product := Admin.AddResource(&models.Product{}, &admin.Config{Menu: []string{"Product Management"}})
-	product.Meta(&admin.Meta{Name: "MadeCountry", Type: "select_one", Collection: Countries})
-	product.Meta(&admin.Meta{Name: "Description", Type: "rich_editor", Resource: assetManager})
+	product.Meta(&admin.Meta{Name: "MadeCountry", Config: &admin.SelectOneConfig{Collection: Countries}})
+	product.Meta(&admin.Meta{Name: "Description", Config: &admin.RichEditorConfig{AssetManager: assetManager}})
 
-	// Add Color
 	colorVariationMeta := product.Meta(&admin.Meta{Name: "ColorVariations"})
 	colorVariation := colorVariationMeta.Resource
 	colorVariation.NewAttrs("-Product")
@@ -240,10 +237,9 @@ func init() {
 	order.Meta(&admin.Meta{Name: "ShippedAt", Type: "date"})
 
 	orderItemMeta := order.Meta(&admin.Meta{Name: "OrderItems"})
-	orderItemMeta.Resource.Meta(&admin.Meta{Name: "SizeVariation", Type: "select_one", Collection: sizeVariationCollection})
+	orderItemMeta.Resource.Meta(&admin.Meta{Name: "SizeVariation", Config: &admin.SelectOneConfig{Collection: sizeVariationCollection}})
 	orderItemMeta.Resource.NewAttrs("-State")
 	orderItemMeta.Resource.EditAttrs("-State")
-
 	// define scopes for Order
 	for _, state := range []string{"checkout", "cancelled", "paid", "paid_cancelled", "processing", "shipped", "returned"} {
 		var state = state
@@ -679,6 +675,7 @@ func init() {
 
 	// Add Publish
 	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
+	publish.RegisterL10nForPublish(db.Publish, Admin)
 
 	// Add Search Center Resources
 	Admin.AddSearchResource(product, user, order)

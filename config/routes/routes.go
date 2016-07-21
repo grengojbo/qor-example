@@ -6,18 +6,26 @@ import (
 	// "net/http"
 	// "strings"
 
-	"github.com/gin-gonic/contrib/jwt"
+	// "github.com/gin-gonic/contrib/jwt"
 	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/itsjamie/gin-cors"
 	"github.com/qor/qor-example/app/controllers"
 	"github.com/qor/qor-example/config"
 	// "github.com/qor/qor-example/config/auth"
+	"github.com/qor/qor"
+	"github.com/qor/qor-example/db"
+	"github.com/qor/qor/utils"
 )
 
 func Router() *gin.Engine {
 	conf := config.Config
 	router := gin.Default()
+	router.Use(func(ctx *gin.Context) {
+		if locale := utils.GetLocale(&qor.Context{Request: ctx.Request, Writer: ctx.Writer}); locale != "" {
+			ctx.Set("DB", db.DB.Set("l10n:locale", locale))
+		}
+	})
 	gin.SetMode(gin.DebugMode)
 	router.Use(cors.Middleware(cors.Config{
 		Origins:         "*",
@@ -60,6 +68,8 @@ func Router() *gin.Engine {
 	// router.GET("/dashboard", controllers.Dashboard)
 	// router.GET("/products", controllers.ProductIndex)
 	router.GET("/products/:code", controllers.ProductShow)
+	router.GET("/switch_locale", controllers.SwitchLocale)
+
 	router.GET("/login", controllers.LoginForm)
 	router.POST("/login", controllers.Login)
 	router.GET("/logout", controllers.Logout)
@@ -82,10 +92,10 @@ func Router() *gin.Engine {
 	v1.DELETE("/auth/:id", controllers.LogoutApi)
 
 	// API version 2 support JWT
-	v2 := router.Group("api/v2")
+	// v2 := router.Group("api/v2")
 	// https://github.com/appleboy/gin-jwt
-	v2.Use(jwt.Auth(config.Config.Token))
-	v2.GET("/users/:id", controllers.UserShow)
+	// v2.Use(jwt.Auth(config.Config.Token))
+	// v2.GET("/users/:id", controllers.UserShow)
 
 	// router.GET("/", func(c *gin.Context) {
 	// 	c.Redirect(http.StatusMovedPermanently, "/admin")

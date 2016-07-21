@@ -4,16 +4,13 @@ import (
 	"log"
 
 	"github.com/qor/activity"
-	"github.com/qor/admin"
 	"github.com/qor/media_library"
 	"github.com/qor/publish"
 	"github.com/qor/qor-example/app/models"
+	"github.com/qor/qor-example/config/admin"
 	"github.com/qor/qor-example/db"
 	"github.com/qor/transition"
-	"github.com/qor/widget"
 )
-
-var Admin *admin.Admin
 
 // func init() {
 func Run() {
@@ -76,10 +73,7 @@ func Run() {
 	log.Println("model: QorActivity")
 	AutoMigrate(&activity.QorActivity{})
 
-	log.Println("model: QorWidgetSetting")
-	AutoMigrate(&widget.QorWidgetSetting{})
-
-	log.Println("Finish migration :)")
+	AutoMigrate(&admin.QorWidgetSetting{})
 }
 
 func AutoMigrate(values ...interface{}) {

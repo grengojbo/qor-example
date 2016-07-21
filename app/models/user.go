@@ -42,12 +42,7 @@ type User struct {
 
 	// Recover
 	RecoverToken       string
-	RecoverTokenExpiry time.Time
-
-	// Email     []Email
-	// Phone     []Phone
-	// Social    []Social
-	// Location  string
+	RecoverTokenExpiry *time.Time
 }
 
 // func (user User) TableName() string {

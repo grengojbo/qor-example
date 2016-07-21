@@ -47,14 +47,14 @@ func init() {
 
 	if err == nil {
 		if debug := os.Getenv("DEBUG"); len(debug) > 0 {
-			DB.LogMode(false)
+			DB.LogMode(true)
 		} else {
 			DB.LogMode(config.Config.DB.Debug)
 		}
-		Publish = publish.New(DB)
+		Publish = publish.New(DB.Set("l10n:mode", "unscoped"))
 		// config.Config.I18n = i18n.New(database.New(DB))
 
-		l10n.Global = config.Config.Locale
+		// l10n.Global = config.Config.Locale
 		l10n.RegisterCallbacks(DB)
 		sorting.RegisterCallbacks(DB)
 		validations.RegisterCallbacks(DB)

@@ -153,8 +153,8 @@ func LoginJWT(ctx *gin.Context) {
 	// Create the token
 	token := jwt_lib.New(jwt_lib.GetSigningMethod("HS256"))
 	// Set some claims
-	token.Claims["ID"] = "Christopher"
-	token.Claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
+	// token.Claims["ID"] = "Christopher"
+	// token.Claims["exp"] = time.Now().Add(time.Hour * 1).Unix()
 	// Sign and get the complete encoded token as a string
 	tokenString, err := token.SignedString([]byte(config.Config.Token))
 	if err != nil {
