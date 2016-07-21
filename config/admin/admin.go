@@ -15,12 +15,14 @@ import (
 	"github.com/qor/media_library"
 	"github.com/qor/qor"
 	"github.com/qor/qor-example/app/models"
+	"github.com/qor/qor-example/config"
 	"github.com/qor/qor-example/config/admin/bindatafs"
 	"github.com/qor/qor-example/config/auth"
 	"github.com/qor/qor-example/config/i18n"
 	"github.com/qor/qor-example/db"
 	"github.com/qor/qor/resource"
 	"github.com/qor/qor/utils"
+	"github.com/qor/roles"
 	"github.com/qor/transition"
 	"github.com/qor/validations"
 )
@@ -34,6 +36,9 @@ func init() {
 	Admin.SetSiteName("Qor DEMO")
 	Admin.SetAuth(auth.AdminAuth{})
 	Admin.SetAssetFS(bindatafs.AssetFS)
+	config.Filebox.SetAuth(auth.AdminAuth{})
+	dir := config.Filebox.AccessDir("/")
+	dir.SetPermission(roles.Allow(roles.Read, "admin"))
 
 	// Add Dashboard
 	Admin.AddMenu(&admin.Menu{Name: "Dashboard", Link: "/admin"})
@@ -309,6 +314,13 @@ func init() {
 	// Add User
 	user := Admin.AddResource(&models.User{})
 	user.Meta(&admin.Meta{Name: "Gender", Config: &admin.SelectOneConfig{Collection: []string{"Male", "Female", "Unknown"}}})
+	user.Meta(&admin.Meta{Name: "Role", Config: &admin.SelectOneConfig{Collection: []string{"Admin", "Maintainer", "Member"}}})
+	user.Meta(&admin.Meta{Name: "Confirmed", Valuer: func(user interface{}, ctx *qor.Context) interface{} {
+		if user.(*models.User).ID == 0 {
+			return true
+		}
+		return user.(*models.User).Confirmed
+	}})
 
 	user.IndexAttrs("ID", "Email", "Name", "Gender", "Role")
 	user.ShowAttrs(
@@ -318,6 +330,7 @@ func init() {
 				{"Name"},
 				{"Email", "Password"},
 				{"Gender", "Role"},
+				{"Confirmed"},
 			}},
 		"Addresses",
 	)
