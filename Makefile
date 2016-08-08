@@ -73,7 +73,7 @@ install:
 	@go get -v -u github.com/go-resty/resty
 	@go get -v -u github.com/gin-gonic/gin
 	@go get -v -u github.com/itsjamie/gin-cors
-	@go get -v -u github.com/gin-gonic/contrib/jwt
+	@#go get -v -u github.com/gin-gonic/contrib/jwt
 	@go get -v -u github.com/codegangsta/cli
 	@go get -v -u github.com/azumads/faker
 	@go get -v -u github.com/jteeuwen/go-bindata/...
