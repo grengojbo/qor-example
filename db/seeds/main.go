@@ -3,6 +3,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -42,7 +43,7 @@ var (
 	Tables = []interface{}{
 		&models.User{}, &models.Address{},
 		&models.Category{}, &models.Color{}, &models.Size{}, &models.Collection{},
-		&models.Product{}, &models.ColorVariation{}, &models.ColorVariationImage{}, &models.SizeVariation{},
+		&models.Product{}, &models.ProductImage{}, &models.ColorVariation{}, &models.SizeVariation{},
 		&models.Store{},
 		&models.Order{}, &models.OrderItem{},
 		&models.Setting{},
@@ -254,22 +255,43 @@ func createProducts() {
 			colorVariation.ProductID = product.ID
 			colorVariation.ColorID = color.ID
 			colorVariation.ColorCode = cv.ColorCode
-			if err := db.DB.Create(&colorVariation).Error; err != nil {
-				log.Fatalf("create color_variation (%v) failure, got err %v", colorVariation, err)
-			}
 
 			for _, i := range cv.Images {
-				image := models.ColorVariationImage{}
+				image := models.ProductImage{Title: p.Name}
 				if file, err := openFileByURL(i.URL); err != nil {
 					fmt.Printf("open file (%q) failure, got err %v", i.URL, err)
 				} else {
 					defer file.Close()
 					image.Image.Scan(file)
 				}
-				image.ColorVariationID = colorVariation.ID
 				if err := db.DB.Create(&image).Error; err != nil {
 					log.Fatalf("create color_variation_image (%v) failure, got err %v", image, err)
+				} else {
+					colorVariation.Images.Files = append(colorVariation.Images.Files, media_library.File{
+						ID:  json.Number(fmt.Sprint(image.ID)),
+						Url: image.Image.URL(),
+					})
+
+					colorVariation.Images.Crop(admin.Admin.NewResource(&models.ProductImage{}), db.DB, media_library.MediaOption{
+						Sizes: map[string]media_library.Size{
+							"icon":    {Width: 50, Height: 50},
+							"preview": {Width: 300, Height: 300},
+							"listing": {Width: 640, Height: 640},
+						},
+					})
+
+					if len(product.MainImage.Files) == 0 {
+						product.MainImage.Files = []media_library.File{{
+							ID:  json.Number(fmt.Sprint(image.ID)),
+							Url: image.Image.URL(),
+						}}
+						db.DB.Save(&product)
+					}
 				}
+			}
+
+			if err := db.DB.Create(&colorVariation).Error; err != nil {
+				log.Fatalf("create color_variation (%v) failure, got err %v", colorVariation, err)
 			}
 
 			for _, sv := range p.SizeVariations {
@@ -284,6 +306,7 @@ func createProducts() {
 				}
 			}
 		}
+
 		product.Name = p.ZhName
 		product.Description = p.ZhDescription
 		product.MadeCountry = p.ZhMadeCountry
