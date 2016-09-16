@@ -1,6 +1,7 @@
 package models
 
 import (
+	"database/sql"
 	"log"
 	"time"
 
@@ -10,22 +11,23 @@ import (
 )
 
 type UserApi struct {
-	ID     uint   `json:"id"`
-	Email  string `json:"email"`
-	Name   string `json:"name"`
-	Gender string `json:"gender"`
-	Role   string `json:"role"`
-	Token  string `json:"token"`
+	ID      uint   `json:"id"`
+	Email   string `json:"email"`
+	Name    string `json:"name"`
+	Gender  string `json:"gender"`
+	Role    string `json:"role"`
+	Token   string `json:"token"`
+	Enabled bool   `json:"enabled"`
 }
 
 type User struct {
 	gorm.Model
-	Email           string `sql:"type:varchar(75)" json:"email"`
-	Name            string `gorm:"column:name" sql:"type:varchar(30);unique_index" json:"username"`
-	Password        string `sql:"type:varchar(128)" json:"-"`
-	PasswordConfirm string `gorm:"-" json:"-"`
-	FirstName       string `sql:"type:varchar(30)" json:"first_name"`
-	LastName        string `sql:"type:varchar(30)" json:"last_name"`
+	Email           string         `sql:"type:varchar(75)" json:"email"`
+	Name            sql.NullString `gorm:"column:name" sql:"type:varchar(30)" json:"username"`
+	Password        string         `sql:"type:varchar(128)" json:"-"`
+	PasswordConfirm string         `gorm:"-" json:"-"`
+	FirstName       string         `sql:"type:varchar(30)" json:"first_name"`
+	LastName        string         `sql:"type:varchar(30)" json:"last_name"`
 	OrganizationID  uint
 	Organization    Organization
 	Gender          string
@@ -33,7 +35,7 @@ type User struct {
 	Languages       []Language `gorm:"many2many:user_languages;"`
 	Addresses       []Address
 	Comment         string
-	Enabled         bool `sql:"default:false" json:"-"`
+	Enabled         bool `sql:"default:true" json:"-"`
 	Avatar          media_library.FileSystem
 
 	// Confirm
@@ -50,7 +52,7 @@ type User struct {
 // }
 
 func (user User) DisplayName() string {
-	return user.Name
+	return user.Name.String
 }
 
 func (user User) AvailableLocales() []string {

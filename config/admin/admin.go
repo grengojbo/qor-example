@@ -40,6 +40,9 @@ func init() {
 	Admin.SetSiteName(config.Config.SiteName)
 	Admin.SetAuth(auth.AdminAuth{})
 	Admin.SetAssetFS(bindatafs.AssetFS)
+	config.Filebox.SetAuth(auth.AdminAuth{})
+	dir := config.Filebox.AccessDir("/")
+	dir.SetPermission(roles.Allow(roles.Read, "admin"))
 
 	// Add Dashboard
 	Admin.AddMenu(&admin.Menu{Name: "Dashboard", Link: "/admin"})
@@ -448,24 +451,29 @@ func init() {
 
 	// Add User
 	user := Admin.AddResource(&models.User{})
-	user.Meta(&admin.Meta{Name: "Gender", Type: "select_one", Collection: []string{"Male", "Female", "Unknown"}})
+	user.Meta(&admin.Meta{Name: "Gender", Config: &admin.SelectOneConfig{Collection: []string{"Male", "Female", "Unknown"}}})
+	user.Meta(&admin.Meta{Name: "Role", Config: &admin.SelectOneConfig{Collection: []string{"Admin", "Maintainer", "Member"}}})
+	user.Meta(&admin.Meta{Name: "Confirmed", Valuer: func(user interface{}, ctx *qor.Context) interface{} {
+		if user.(*models.User).ID == 0 {
+			return true
+		}
+		return user.(*models.User).Confirmed
+	}})
+
+	user.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
 
 	user.IndexAttrs("ID", "Email", "Name", "LastName", "FirstName", "Gender", "Role", "Enabled")
-	user.SearchAttrs("Name", "LastName", "FirstName", "Email", "Organization.Name")
-	user.Meta(&admin.Meta{Name: "Comment", Type: "rich_editor"})
-	user.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
-	user.Meta(&admin.Meta{Name: "Role", Type: "select_one", Collection: models.Roles()})
-	user.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "User Status",
-		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Where(models.User{Enabled: true})
-		},
-	})
-	user.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "User Status",
-		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
-			return db.Not(models.User{Enabled: true})
-		},
-	})
-	user.NewAttrs("-Password", "-PasswordConfirm")
+	user.ShowAttrs(
+		&admin.Section{
+			Title: "Basic Information",
+			Rows: [][]string{
+				{"Name"},
+				{"Email", "Password"},
+				{"Gender", "Role"},
+				{"Confirmed"},
+			}},
+		"Addresses",
+	)
 	user.EditAttrs(
 		&admin.Section{
 			Title: "Basic Information",
@@ -479,7 +487,23 @@ func init() {
 		"Addresses",
 		"Comment",
 	)
-	// user.ShowAttrs(user.EditAttrs())
+
+	// user.NewAttrs("-Password", "-PasswordConfirm")
+
+	user.SearchAttrs("Name", "LastName", "FirstName", "Email", "Organization.Name")
+
+	user.Meta(&admin.Meta{Name: "PasswordConfirm", Type: "password"})
+
+	user.Scope(&admin.Scope{Name: "active", Label: "Enable", Group: "User Status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Where(models.User{Enabled: true})
+		},
+	})
+	user.Scope(&admin.Scope{Name: "noactive", Label: "Disable", Group: "User Status",
+		Handle: func(db *gorm.DB, context *qor.Context) *gorm.DB {
+			return db.Not(models.User{Enabled: true})
+		},
+	})
 
 	user.Action(&admin.Action{
 		Name: "Disable",
@@ -662,9 +686,6 @@ func init() {
 	Admin.AddResource(&models.Unit{}, &admin.Config{Menu: []string{"Site Management"}})
 	Admin.AddResource(&models.Role{}, &admin.Config{Menu: []string{"Site Management"}})
 	Admin.AddResource(&models.Language{}, &admin.Config{Menu: []string{"Site Management"}})
-
-	// Add Publish
-	Admin.AddResource(db.Publish, &admin.Config{Singleton: true})
 
 	// Add Worker
 	Worker := getWorker()

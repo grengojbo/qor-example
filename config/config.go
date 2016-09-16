@@ -5,10 +5,11 @@ import (
 	"os"
 
 	"github.com/jinzhu/configor"
-	// "github.com/qor/i18n"
+	"github.com/qor/filebox"
 	"github.com/qor/render"
 )
 
+// SMTPConfig - конфиг для почты
 type SMTPConfig struct {
 	Host     string
 	Port     string
@@ -17,6 +18,7 @@ type SMTPConfig struct {
 	Site     string
 }
 
+// Config - модель конфигурации
 var Config = struct {
 	SiteName  string `default:"Qor DEMO"`
 	ApiUrl    string `default:"http://localhost:7000/api/"`
@@ -57,10 +59,12 @@ var Config = struct {
 }{}
 
 var (
+	// Root - путь к приложению
 	Root       = os.Getenv("GOPATH") + "/src/github.com/qor/qor-example"
 	FileConfig = os.Getenv("QORROOT") + "/config/database.yml"
 	FileSMTP   = os.Getenv("QORROOT") + "/config/smtp.yml"
 	View       *render.Render
+	Filebox    *filebox.Filebox
 )
 
 // Set environment variable config path -> export QORCONFIG=/etc/qor/production.yml
@@ -82,8 +86,10 @@ func init() {
 	}
 
 	View = render.New()
+	Filebox = filebox.New(Root + "/public/downloads")
 }
 
+// HostWithPort - Host + Port
 func (s SMTPConfig) HostWithPort() string {
 	return s.Host + ":" + s.Port
 }
