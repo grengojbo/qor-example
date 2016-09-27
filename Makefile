@@ -87,6 +87,7 @@ install:
 	@go get -v -u github.com/tealeg/xlsx
 	@go get -v -u github.com/justinas/nosurf
 	@go get -v -u github.com/asaskevich/govalidator
+	@go get -v -u github.com/gorilla/csrf
 	@#go get -v -u
 
 qor:
