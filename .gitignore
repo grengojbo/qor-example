@@ -38,6 +38,7 @@ db/seeds/main
 harp.json
 .harp
 tmp/*
+db/*
 
 node_modules/
 public/assets/
