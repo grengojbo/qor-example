@@ -41,6 +41,7 @@ db/*.db
 db/seeds/enterprise
 db/seeds/main
 db/node.*
+db/test/*
 dist/*
 harp.json
 .harp
