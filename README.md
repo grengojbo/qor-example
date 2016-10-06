@@ -10,7 +10,14 @@ Chat Room: [![Join the chat at https://gitter.im/qor/qor](https://badges.gitter.
 
 ```shell
 # Get example app
-$ go get -u github.com/qor/qor-example
+mkdir -p ${GOPATH}/src/github.com/qor && cd ${GOPATH}/src/github.com/qor
+git clone https://github.com/grengojbo/qor-example && cd qor-example
+git remote add upstream https://github.com/qor/qor-example.git
+git fetch upstream
+git checkout -b upstream --track upstream/master
+make install
+make qor
+make git
 
 # Setup database
 $ mysql -uroot -p
