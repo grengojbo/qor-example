@@ -1,4 +1,8 @@
 db:
-  adapter: mysql
-  name: qor_example
-  user: root
+  adapter: postgres
+  name: qor_dev
+  user: udev
+  password: password
+  host: 10.0.0.0
+  port: 5432
+  debug: true

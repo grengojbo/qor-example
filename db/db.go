@@ -28,14 +28,16 @@ func init() {
 	if config.Config.DB.Adapter == "mysql" {
 		DB, err = gorm.Open("mysql", fmt.Sprintf("%v:%v@tcp(%v:%v)/%v?parseTime=True&loc=Local&charset=utf8", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Host, config.Config.DB.Port, config.Config.DB.Name))
 	} else if config.Config.DB.Adapter == "postgres" {
-		DB, err = gorm.Open("postgres", fmt.Sprintf("postgres://%v:%v@localhost/%v?sslmode=disable", dbConfig.User, dbConfig.Password, dbConfig.Name))
+		DB, err = gorm.Open("postgres", fmt.Sprintf("user=%v password=%v dbname=%v host=%v port=%v sslmode=disable", config.Config.DB.User, config.Config.DB.Password, config.Config.DB.Name, config.Config.DB.Host, config.Config.DB.Port))
 	} else {
 		panic(errors.New("not supported database adapter"))
 	}
 
 	if err == nil {
-		if os.Getenv("DEBUG") != "" {
+		if debug := os.Getenv("DEBUG"); len(debug) > 0 {
 			DB.LogMode(true)
+		} else {
+			DB.LogMode(config.Config.DB.Debug)
 		}
 		Publish = publish.New(DB.Set("l10n:mode", "unscoped"))
 
