@@ -84,7 +84,7 @@ install:
 	@go get -v -u github.com/jinzhu/gorm/dialects/sqlite
 	@go get -v -u github.com/smartystreets/goconvey/convey
 	@go get -v -u github.com/shopspring/decimal
-	@go get -v -u github.com/tealeg/xlsx
+	@#go get -v -u github.com/tealeg/xlsx
 	@go get -v -u github.com/justinas/nosurf
 	@go get -v -u github.com/asaskevich/govalidator
 	@go get -v -u github.com/gorilla/csrf
