@@ -1,0 +1,45 @@
+migration: true
+db:
+  adapter: sqlite
+  name: ./db/qor.db
+  debug: true
+dbmysql:
+  adapter: mysql
+  name: qor_example
+  user: uqor_example
+  password: pqor_example
+  host: 10.0.7.17
+  port: 3306
+  debug: true
+dbdev:
+  adapter: postgres
+  name: qor_dev
+  user: udev
+  password: m5y7v34nmky5bD
+  host: 10.0.103.125
+  port: 5432
+  debug: true
+dbkassa:
+  adapter: postgres
+  name: qor_kassa
+  user: ukassa
+  password: Dkym5v34nm5by7
+  host: 10.0.103.125
+  port: 5432
+  debug: true
+dbrfid:
+  adapter: postgres
+  name: qor_rfid
+  user: urfid
+  password: v34nmm5y75bDky
+  host: 10.0.103.125
+  port: 5432
+  debug: true
+secret: abgb29eonufrl50efir4o==k*9)zi5@osf6)qxCZKTecoZK0Ac78cesszk34ecounits445adms=ADSuatvME
+limit: 15
+locales: ru-RU
+redis:
+  host: 10.0.103.4
+session:
+  name: sessionid
+  adapter: cookie
