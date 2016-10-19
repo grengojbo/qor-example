@@ -176,7 +176,7 @@ build: clean
 	# @chmod 0755 ./$(BIN_NAME_CLI)
 
 
-cli: clean
+cli:
 	@echo "Building cli ${VERSION}"
 	@go build -a -tags netgo -ldflags '-w -X cmd.BuildTime=${CUR_TIME} -X cmd.Version=${VERSION} -X cmd.GitHash=${GIT_COMMIT}' -o $(BIN_NAME_CLI) cmd/cli.go
 	@chmod 0755 ./$(BIN_NAME_CLI)
