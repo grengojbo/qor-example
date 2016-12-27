@@ -106,9 +106,6 @@ view:
 	@cp -R ${QOR_REPO}admin/views ${QOR_DIR}/github.com/qor/admin/
 	@cp -R ${QOR_DIR}/github.com/qor/admin/views/assets ${DIST_PUBLIC}/admin/
 
-	@#mkdir -p ${QOR_DIR}/github.com/qor/media_library/
-	@#cp -R ${QOR_REPO}l10n/views ${QOR_DIR}/github.com/qor/l10n/
-	@#cp -R ${QOR_DIR}/github.com/qor/l10n/views/themes/l10n/assets ${DIST_PUBLIC}/admin/
 
 	@for a in $(QORTHEME); do echo "--> $$a"; mkdir -p ${QOR_DIR}/github.com/qor/$$a; cp -R ${QOR_REPO}$$a/views ${QOR_DIR}/github.com/qor/$$a/; test ! -e ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets || cp -R ${QOR_DIR}/github.com/qor/$$a/views/themes/$$a/assets ${DIST_PUBLIC}/admin/; done
 
