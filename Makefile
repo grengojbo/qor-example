@@ -1,4 +1,4 @@
-MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render cache bindatafs action_bar filebox notification wildcard_router gomerchant app log publish2 version accessibility product help gomerchant
+MODULES=activity l10n responder sorting audited location roles transition exchange media_library seo validations i18n qor serializable_meta worker inflection slug publish admin widget render cache bindatafs action_bar filebox notification wildcard_router gomerchant app log publish2 version accessibility product help gomerchant banner_editor doc
 
 QORTHEME=activity i18n l10n location media_library publish seo serializable_meta slug sorting widget worker
 
@@ -84,7 +84,7 @@ install:
 	@go get -v -u github.com/jinzhu/gorm/dialects/sqlite
 	@go get -v -u github.com/smartystreets/goconvey/convey
 	@go get -v -u github.com/shopspring/decimal
-	@go get -v -u github.com/tealeg/xlsx
+	@#go get -v -u github.com/tealeg/xlsx
 	@go get -v -u github.com/justinas/nosurf
 	@go get -v -u github.com/asaskevich/govalidator
 	@go get -v -u github.com/gorilla/csrf
